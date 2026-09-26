@@ -125,12 +125,11 @@ def test_a_fatal_signal_in_the_judge_leaves_a_traceback() -> None:
     """Both ranks 641799 lost ended their log mid-line and said nothing. faulthandler is what turns
     the next one into evidence instead of a guess."""
     probe = (
-        "import faulthandler, os, signal, sys;"
-        "sys.path.insert(0, %r);"
+        "import faulthandler, os, signal;"
         "from hpcagent_bench.harness.service import enable_crash_traces;"
         "enable_crash_traces();"
         "print(faulthandler.is_enabled(), flush=True);"
-        "os.kill(os.getpid(), signal.SIGSEGV)" % str(REPO)
+        "os.kill(os.getpid(), signal.SIGSEGV)"
     )
     done = subprocess.run([sys.executable, "-c", probe], capture_output=True, text=True, check=False)
     assert done.stdout.strip() == "True", done.stdout

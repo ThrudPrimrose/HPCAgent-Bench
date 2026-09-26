@@ -42,14 +42,10 @@ _NATIVE_KERNEL_STEM = "heat_3d"  # directory stem; recorded under short_name "he
 
 def _native_env(cwd: pathlib.Path) -> dict:
     """Environment for the forked native sweep: isolated dace cache, single-threaded, MPI
-    anti-hang vars, and the repo on PYTHONPATH so the child can import hpcagent_bench."""
-    import hpcagent_bench
-
-    repo_root = pathlib.Path(hpcagent_bench.__file__).resolve().parents[1]
+    anti-hang vars."""
     cache = cwd / "dacecache"
     env = dict(os.environ)
     env.update(
-        PYTHONPATH=str(repo_root) + os.pathsep + env.get("PYTHONPATH", ""),
         DACE_default_build_folder=str(cache / ".dacecache"),
         OMP_NUM_THREADS="1",
         MPLBACKEND="Agg",

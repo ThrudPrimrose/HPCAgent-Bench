@@ -24,7 +24,6 @@ import subprocess
 import sys
 import warnings
 from collections.abc import Callable
-from typing import Dict, List, Tuple
 
 import numpy as np
 import pytest
@@ -59,7 +58,7 @@ N = 4096
 #: the child's pool), which is precisely why "the child didn't hang" is too weak an observable
 #: to pin tear-down with. The default -- libgomp + soft -- is the one that must genuinely tear
 #: down, and does.
-TEARS_DOWN_POOL: Dict[Tuple[str, str], bool] = {
+TEARS_DOWN_POOL: dict[tuple[str, str], bool] = {
     ("gomp", "soft"): True,
     ("gomp", "hard"): True,
     ("omp", "soft"): False,
@@ -212,7 +211,7 @@ def test_both_teardown_modes_make_the_fork_safe(tmp_path: pathlib.Path, runtime:
     assert got == b"ok", f"lib{runtime} + omp_pause_{mode}: child {why}"
 
 
-def mapped_omp() -> List[str]:
+def mapped_omp() -> list[str]:
     with open("/proc/self/maps") as fh:
         maps = fh.read()
     return sorted({n for n in ("libgomp", "libomp", "libiomp5", "libnvomp") if n + ".so" in maps})
@@ -307,7 +306,7 @@ def test_a_mapped_but_never_started_libomp_is_not_reported_as_a_live_pool(tmp_pa
         "pause_openmp_pools()\n"
         "print('libomp.so' in pathlib.Path('/proc/self/maps').read_text())\n"
     )
-    env = {**os.environ, "PYTHONPATH": os.pathsep.join(filter(None, (str(REPO), os.environ.get("PYTHONPATH"))))}
+    env = dict(os.environ)
     proc = subprocess.run([sys.executable, "-c", script, str(so)], capture_output=True, text=True, env=env, check=False)
     assert proc.returncode == 0, proc.stderr[-800:]
     assert proc.stdout.strip() == "True", f"libomp was never mapped, so its refusal went untested: {proc.stdout!r}"

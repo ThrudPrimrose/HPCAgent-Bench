@@ -219,7 +219,6 @@ def materialize_arm(
 ) -> subprocess.CompletedProcess[str]:
     env = {key: value for key, value in os.environ.items() if key not in ("CPF_DROPIN_DIR", "AGENT_LANGUAGE")}
     env.update(
-        PYTHONPATH=f"{REPO}",
         HPCAGENT_BENCH_HOST_PYTHON=sys.executable,
         **arm,
     )
