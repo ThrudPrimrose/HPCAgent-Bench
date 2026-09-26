@@ -184,7 +184,7 @@ registered EDF as-is. A model that serves here and fails in a campaign run: susp
 - `experiments/serve-only.sbatch`, `experiments/serve-only.env`: the launcher on this page.
 - `experiments/layers/model-<m>.env`, `experiments/.env.base-<m>`: per-model launch lines with inline reasons.
 - `containers/inference/`: `smoke-kimi-sglang.sbatch` (serving smoke with accuracy
-  gate and concurrency sweep), `agentlike-probe.py` (multi-stream load), `accuracy-gate.py`,
+  gate and concurrency sweep), `accuracy-gate.py`,
   `verify-tools-reasoning.py`.
 
 Node-to-node spread is about 30%. Re-measure a flag change **on one node, back to back**.

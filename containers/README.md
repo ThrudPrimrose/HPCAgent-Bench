@@ -105,8 +105,7 @@ DRY_RUN=1 ./promote_image.sh --all      # what would move
 ```
 
 Build gates prove that an engine imports, not that it serves, so a serving candidate is smoked
-before promotion. `experiments/smoke-new-images.sh` runs the SGLang candidate through
-`inference/smoke-kimi-sglang.sbatch`. A vLLM candidate is smoked with `experiments/serve-only.sbatch`,
+before promotion: an SGLang candidate through `inference/smoke-kimi-sglang.sbatch`. A vLLM candidate is smoked with `experiments/serve-only.sbatch`,
 which serves what a campaign serves: copy `~/.edf/hpcagent-bench-vllm-mi300-latest.toml` to
 `~/.edf/candidate-vllm.toml` with `image` pointing at `hpcagent-bench-vllm-candidate.sqsh`, then
 run `SERVE_ENV_FILE=<copy of serve-only.env plus INFERENCE_CE_ENV=candidate-vllm> MODEL=oss120b
@@ -123,13 +122,11 @@ Fabric checks after a judge-agent build (name the candidate: the live names stil
 
 | job | nodes | answers |
 |---|---|---|
-| `mpi_check.sbatch` | 1 | which libfabric and provider MPI mapped, GPU-aware allreduce, PETSc HIP |
 | `mpi_multinode_check.sbatch` | 2 | a cross-node MPI transfer rides cxi |
 | `rccl_hook_check.sbatch` | 2 | RCCL selects the OFI plugin, not its TCP fallback (any role) |
-| `inference/aiter_mla_check.sbatch` | 1 | aiter MLA kernels agree with an fp32 reference |
 
 ```bash
-IMAGE=$SCRATCH/ce-images/hpcagent-bench-ce-amd-mi300-candidate.sqsh sbatch --dependency=afterok:<build job> mpi_check.sbatch
+IMAGE=$SCRATCH/ce-images/hpcagent-bench-ce-amd-mi300-candidate.sqsh sbatch --dependency=afterok:<build job> mpi_multinode_check.sbatch
 ```
 
 ### NVIDIA GH200 (daint)
@@ -234,9 +231,8 @@ backends -- 25% slower, all of it in decode (steady state 2540 vs 3187; prefill 
 | `serve-private.sbatch` | a private Qwen3.8 endpoint on one beverin node (`docs/serving/private-endpoint.md`) |
 | `serve-daint.sbatch`, `alps-endpoint.sh` | GH200 serving and the client-side endpoint check |
 | `smoke-kimi-sglang.sbatch`, `submit-glm53-sglang.sh` | multi-node SGLang serving smokes (GLM-5.3 through the second) |
-| `verify-tools-reasoning.py`, `accuracy-gate.py`, `agentlike-probe.py` | tool-call/reasoning, long-context accuracy and throughput gates against a live server |
+| `verify-tools-reasoning.py`, `accuracy-gate.py` | tool-call/reasoning, long-context accuracy and throughput gates against a live server |
 | `tune-moe-int4-mi300a.sbatch`, `merge_moe_configs.py`, `moe-configs/` | MoE tuning; `moe-configs/` is build input for `sglang/` and `vllm/` |
-| `aiter_mla_check.*`, `sglang_kernel_launch_check.py` | kernel-level correctness checks without a server |
 
 ## Publishing
 
@@ -249,7 +245,6 @@ Credentials come only from the environment.
 DRY_RUN=1 sbatch push_images.sbatch
 REGISTRY_USER=<user> REGISTRY_TOKEN=<token> DRY_RUN=0 ROLES="sglang vllm" sbatch push_images.sbatch
 judge-agent-amd/build-judge-release.sh <git-ref>     # release judge: agent archive + package at <ref>
-sqsh_to_oci.sh $SCRATCH/ce-images/<image>.sqsh      # an archive for a squashfs built without one
 ```
 
 ## Numeric libraries

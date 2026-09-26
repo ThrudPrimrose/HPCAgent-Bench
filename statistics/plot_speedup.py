@@ -634,18 +634,6 @@ def mini_figure(points: Sequence[Point], kernels: Sequence[str], output: str, bo
     return plotting.save_figure(output, fig)
 
 
-def group_change(points: Sequence[Point], kernel: str) -> float:
-    """The representative signed change of ``kernel``'s group -- the mean of its cells.
-
-    Only its SIGN is used, to sort a kernel into "the agents sped this up" or "they slowed it
-    down". A mean is enough for that and needs no tie-break rule; where the agents disagree in
-    direction the kernel lands on whichever side is larger, which is the honest summary of a group
-    that has no single direction.
-    """
-    changes = [point.change for point in points if point.kernel == kernel]
-    return sum(changes) / len(changes) if changes else 0.0
-
-
 def variant_output(output: str, variant: str) -> str:
     """``plots/speedup.pdf`` -> ``plots/speedup-<variant>.svg``. Both SVG variants are always
     written beside the banded figure; which formats exist is the spec's answer, not a knob."""

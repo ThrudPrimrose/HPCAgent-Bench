@@ -72,7 +72,6 @@ Blind also needs the judge-side switch, or an agent's own HTTP call still reache
 run directory is `$RUN_ROOT/<jobid>`.
 
 ```bash
-RUN_ROOT=... ./arm_status.sh                       # per arm: state, MCP connects, turns, tok/s
 sacct -j <jobid> -o JobID,JobName%30,State,Elapsed,ExitCode --parsable2
 scontrol show job <jobid> | grep -E 'StdOut|StdErr' # the job's own log paths
 

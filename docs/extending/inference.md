@@ -98,7 +98,7 @@ python -m pytest --maxfail=10 tests/test_display_names.py tests/test_palette.py 
 `edf.toml.in` keeps the `PLACEHOLDER.sqsh` image line, a multi-line `mounts = [` block, absolute
 `PATH` and `LD_LIBRARY_PATH` under `[env]` (the CE drops the image's ENV) and the fabric hook
 annotations. The engine name also goes in the profiles of `verify_image.py` and the role lists
-of `promote_image.sh`, `pull_image.sh` and `experiments/smoke-new-images.sh` (`SMOKE`).
+of `promote_image.sh` and `pull_image.sh`.
 
 The `run_vllm_node` branch serves `${model_path}` as `${VLLM_SERVED_MODEL}` on
 `0.0.0.0:${VLLM_PORT}` with TP `GPUS_PER_NODE`. Under `pp` it takes size, rank and rendezvous from
@@ -109,6 +109,5 @@ The endpoint must answer `GET /v1/models`, `POST /v1/chat/completions` and, in t
 ```bash
 REPO=$PWD IMAGE_DIR=containers/images/<engine> sbatch containers/images/build_and_verify.sbatch
 containers/images/promote_image.sh <engine>   # after the verify job passes
-experiments/smoke-new-images.sh <engine>
 python -m pytest --maxfail=10 tests/test_vllm_pp_serve_args.py tests/test_derived_edf.py
 ```
