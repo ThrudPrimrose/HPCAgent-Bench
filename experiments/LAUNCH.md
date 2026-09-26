@@ -39,7 +39,7 @@ sbatch -A "$HPCAGENT_BENCH_ACCOUNT" --partition=mi300 --no-requeue \
 
 **mi200 (overflow, never paper data).** `PARTITION=mi200` swaps every `*_CE_ENV` to its `-mi200-`
 EDF, pins `layers/partition-mi200*.env` and requests 8 GCDs per node. The recorded experiment must
-name `mi200`; only qwen38 has an mi200 serving layer.
+name `mi200`; there is no mi200 serving image, so an mi200 arm uses a hosted model.
 
 ```bash
 PARTITION=mi200 EXPERIMENT=harness20-mi200 BASE=harness TAG=harness20 HARNESSES=claude SUBMIT=1 ./submit.sh

@@ -133,7 +133,7 @@ if mpicc -O0 -o "${work}/prov" "${work}/prov.c" 2>"${work}/prov.log"; then
     [[ -z "${prov}" ]] && prov="$(grep -oiE '\b(cxi|verbs|tcp|sockets|shm|psm3)\b' "${work}/prov.out" | sort -u | tr '\n' ' ' || true)"
     # Non-cxi fails only where cxi was actually available (no /dev/cxi* means nothing to select).
     # One-node probe only: proves MPI initialised the provider, not that a cross-node transfer
-    # rode it -- that is mpi_multinode_check.sbatch.
+    # rode it.
     have_cxi=0
     compgen -G '/dev/cxi*' >/dev/null 2>&1 && have_cxi=1
     case "${prov}" in

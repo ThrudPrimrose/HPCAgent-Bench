@@ -41,8 +41,7 @@ A preset is one partition + image + weights combination.
    `--language-only`). Another model family moves these into `PRESET_FLAGS`; the mi300 test against
    `.env.llrbase-qwen38-c` must still pass.
 3. A new partition needs `GPU_ARCH_<partition>` in `containers/images/gpu_arch.env`, and
-   its image built on that partition (SGLang's `setup_rocm.py` and cupy compile for the visible GPU;
-   [`sglang-mi200/README.md`](../../containers/images/sglang-mi200/README.md)).
+   its image built on that partition (SGLang's `setup_rocm.py` and cupy compile for the visible GPU).
 4. Fetch weights with `MODELS=<repo> sbatch containers/inference/fetch_weights.sbatch`
    and check the Lustre striping it reports.
 5. Tests: add the preset to `PRESETS`, `OTHER_PARTITION`, `DEFAULT_LEG_COUNT`, its weights repo to the

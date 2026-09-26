@@ -133,7 +133,7 @@ Judge shards written before the cancel stay under `$RUN_ROOT/<jobid>/judge/`.
 ## Images
 
 Infrastructure jobs, one node each, run from `containers/images/`. Each role directory
-(`judge-agent-amd`, `sglang`, `sglang-mi200`, `vllm`, ...) holds a Dockerfile and `build.sbatch`.
+(`judge-agent-amd`, `sglang`, `vllm`, ...) holds a Dockerfile and `build.sbatch`.
 `build_and_verify.sbatch` builds a candidate and verifies it in one job, so a build that fails
 verification never reports success:
 
@@ -141,10 +141,6 @@ verification never reports success:
 cd "$HPCAGENT_BENCH_REPO"
 IMAGE_DIR=containers/images/judge-agent-amd \
     sbatch containers/images/build_and_verify.sbatch
-# mi200 variant
-IMAGE_DIR=containers/images/sglang-mi200 \
-    sbatch --partition=mi200 --cpus-per-task=64 --gpus-per-node=8 \
-    containers/images/build_and_verify.sbatch
 ```
 
 A cold judge build takes up to the 24 h partition limit (gcc 16 and LLVM 22 from source, cached in
