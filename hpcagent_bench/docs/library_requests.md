@@ -108,7 +108,3 @@ pytest --maxfail=10 tests/test_library_requests.py tests/test_catalog_library_re
 - `test_skill_isolation_matrix.py` (section E): `packets.libraries_enabled` and both rendered
   prompts follow the switch.
 
-`experiments/smoke_library_requests.sh` is the judge smoke: hand-written sources, no agent,
-`Sandbox.build()`/`score()` in the production judge image, covering cblas, fftw3, rocblas, hipblas
-and dgemm requests plus one bogus name. It runs with the code default (switch on) and proves nothing
-about a given arm's `.env`.

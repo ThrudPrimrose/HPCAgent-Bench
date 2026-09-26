@@ -90,7 +90,7 @@ def test_an_unknown_model_or_campaign_fails_loudly() -> None:
 
 
 def test_the_shell_and_the_module_render_every_base_identically() -> None:
-    """render_env (what the submitters call) and env_spec.render (what owed_wave.py calls) agree."""
+    """render_env (what the submitters call) and env_spec.render agree."""
     for name in BASES:
         assert layers("render", name) == rendered(name), name
 

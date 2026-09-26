@@ -129,11 +129,7 @@ Pricing a compaction:
   counts once in both.
 
 Extraction re-folds `tokens.json` records older than `observations_extract.MIN_RECORD_FOLD` from their
-transcripts. To rewrite a run root's records in place:
-
-```bash
-python scripts/migrate_tokens.py "$RUN_ROOT" --apply
-```
+transcripts.
 
 ## Reading a run
 

@@ -277,7 +277,7 @@ def kernel_status(
 
 
 def queued_kernels(jobs: list[Job], served: dict[str, str]) -> frozenset[str] | None:
-    """The kernels the arm's queued or running jobs will grade, as owed_wave.queue_state reads the
+    """The kernels the arm's queued or running jobs will grade, read from the
     queue: None when one of them serves the WHOLE arm (a single-setup job, or a fused wave whose
     snapshot cannot be read), else the kernels its fused waves' problems files name for it
     (``served`` maps a fused job's id to the raw arm it runs for this identity)."""
@@ -367,7 +367,7 @@ def arm_row(
 #: Fortran arms, and every cpfsrc (v1) arm (only cpfsrc-v2 counts).
 DROPPED_ARMS = campaigns.dropped_pattern()
 
-#: The job-name prefix of a fused owed wave (submit-owed-wave.sh): one job serving many arms.
+#: The job-name prefix of a fused owed wave: one job serving many arms.
 FUSED_JOB_PREFIX = "owed-"
 
 
@@ -411,7 +411,7 @@ def setups_file_arms(env: pathlib.Path) -> set[str]:
 def problems_file_kernels(env: pathlib.Path) -> dict[str, set[str]]:
     """arm -> the kernel names the PROBLEMS_FILE of a fused job's snapshot env serves it; empty when
     the file cannot be read. What a queued wave WILL serve, kernel by kernel: an arm with one kernel
-    queued still owes the rest (owed_wave.queued_fused_kernels)."""
+    queued still owes the rest."""
     path = snapshot_file(env, "PROBLEMS_FILE")
     if path is None:
         return {}

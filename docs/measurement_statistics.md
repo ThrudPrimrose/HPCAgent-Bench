@@ -137,8 +137,7 @@ A task is unsolved when all its inputs are suspect, or when its submission is st
 `recording.record` writes one `submission_cells` row per timed cell beside its `submissions` row,
 joined on `(run_id, benchmark, ts)`: the drawn `shape`, the credited `ratio`, `baseline_policy`
 (`single-v1:<kind>`, or `best-of-v1:<a>+<b>+<c>` when a track races several references and the
-fastest is the denominator) and `baseline_candidates` (the references timed there, which
-`experiments/check_job.py` holds against the policy). The credit a table reports is the final
+fastest is the denominator) and `baseline_candidates` (the references timed there). The credit a table reports is the final
 grade's (`regrade_tasks` below), which re-times every credited submission.
 
 ```sql
@@ -225,8 +224,7 @@ or in-job grade does not reach (wall time) stays owed, and `experiments/finalize
 periodically) plans it into ordinary regrade jobs.
 
 **In-job final grade.** With `grading.final_grade_on_submit` on (env
-`HPCAGENT_BENCH_GRADING_FINAL_GRADE_ON_SUBMIT=1`; set by the LLR submitters and by `owed_wave.py` for
-`llr-focus40` / `llr-focus40-blind` waves only), the judge runs this same command on every correct
+`HPCAGENT_BENCH_GRADING_FINAL_GRADE_ON_SUBMIT=1`; set by the LLR submitters), the judge runs this same command on every correct
 `/submit` it records, after answering it (`hpcagent_bench/harness/final_grade.py`): a one-line
 worklist under `<job>/final-grade/pending/`, a device slot from the judge's own pool behind every
 submission and exploration request, a child pinned as a `regrade.sbatch` shard is, and its rows in

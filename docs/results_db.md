@@ -20,7 +20,7 @@ unsharded file beside them is a merged cache (`recording.aggregate`). The schema
 
 `ts` is the grade's epoch-ms stamp; every table written for one grade carries the same one. Every
 column has a reader (the extractor, `experiments.read_database`, the regrade and final-grade
-passes, `experiments/check_job.py`, `experiments/promote_unsubmitted.py`) or is provenance
+passes, `experiments/promote_unsubmitted.py`) or is provenance
 (`cpu`, `commit_sha`); a column nothing reads is retired (below).
 
 `calls.build_commands` is a JSON list of the exact commands the grader ran to build that grade's

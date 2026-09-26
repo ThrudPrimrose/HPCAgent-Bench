@@ -49,7 +49,6 @@ ALLOWED: dict[str, str] = {
     "tests/test_disk_cache.py": "child processes racing the store import the checkout",
     "tests/test_fork_openmp_safety.py": "child interpreter imports the checkout",
     "tests/test_forked.py": "child forker script imports the checkout",
-    "tests/test_fused_owed_wave.py": "child owed_wave.py imports the checkout",
     "tests/test_harness_runners.py": "child mimics the image: runner/tool dir on the path, PYTHONSAFEPATH=1",
     "tests/test_integration_sweep.py": "child CLI run from a tmp cwd imports the checkout",
     "tests/test_judge_upstream_supervisor.py": "child probe imports the checkout",

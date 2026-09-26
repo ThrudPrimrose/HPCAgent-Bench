@@ -2,7 +2,7 @@
 # A judge rank that dies mid-run leaves rows that look like coverage -- a score promoted before the
 # death, an attempts row from the grade that killed it -- and no rule over the databases can tell
 # that apart from finished work. This file is where the operator's judgement is written down;
-# remaining_kernels.forced_kernels reads it and owed_wave.py reruns those kernels as their class.
+# remaining_kernels.forced_kernels reads it, which owes those kernels as their class.
 # Rows in the results databases are NEVER deleted to make a kernel owed: they stay, and the rerun's
 # own rows supersede them by the usual latest-run rule.
 # status: pending | rerun-submitted | done. Anything but "done" keeps the kernel owed.

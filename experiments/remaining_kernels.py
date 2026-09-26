@@ -302,6 +302,9 @@ def kernel_manifest(kernel: str, opt: str) -> pathlib.Path | None:
 DESCRIPTIVE_MANIFEST_KEYS = frozenset(
     {"experiment_tags", "level", "notes", "_note", "_note_concurrency", "relative_path", "chain_length", "name"}
 )
+#: Size presets no grade reads: grading draws around XL (``XL+fuzz``) and checks correctness at S, so
+#: resizing the single-core ``M`` rung or the interpolated ``L`` leaves every recorded grade comparable.
+UNGRADED_PRESETS = frozenset({"M", "L"})
 
 
 def semantic_fingerprint(text: str) -> str | None:
@@ -317,6 +320,8 @@ def semantic_fingerprint(text: str) -> str | None:
     if not isinstance(parsed, dict):
         return None
     semantic = {key: value for key, value in parsed.items() if key not in DESCRIPTIVE_MANIFEST_KEYS}
+    if isinstance(semantic.get("parameters"), dict):
+        semantic["parameters"] = {k: v for k, v in semantic["parameters"].items() if k not in UNGRADED_PRESETS}
     return hashlib.sha256(json.dumps(semantic, sort_keys=True, default=str).encode()).hexdigest()
 
 
@@ -403,7 +408,7 @@ def shard_dbs(job_dir: str) -> list:
     return sorted(glob.glob(os.path.join(job_dir, "judge", "rank-*", "hpcagent_bench*.db")))
 
 
-#: A FUSED owed wave's run dir (submit-owed-wave.sh) holds ``setups/<setup>.resolved``, one per
+#: A FUSED owed wave's run dir holds ``setups/<setup>.resolved``, one per
 #: setup it served, each naming its arm. Its rows belong to several arms, so every read of such a
 #: job is filtered to one arm: DB rows by ``runs.arm`` of their run_id, episodes by the ``arm`` their
 #: tokens.json carries (agent_driver.FUSED_PROBLEM_KEYS).
@@ -667,7 +672,7 @@ def collect_arms(
     shard DBs and the job ids dropped as smoke, over every root.
 
     A job dir whose arm cannot be read is a hard error, unless ``unreadable`` is given: a caller
-    sweeping EVERY root (owed_wave.py) collects those job dirs there and carries on.
+    sweeping EVERY root collects those job dirs there and carries on.
 
     ``frozen_dir`` adds every job of these roots whose directory is GONE but whose rows survive in
     the frozen observations (frozen_observations.py): its triple names the missing directory, and

@@ -67,7 +67,7 @@ esac
 host_python="${HPCAGENT_BENCH_HOST_PYTHON:?prepare_job.sh: HPCAGENT_BENCH_HOST_PYTHON is not set}"
 
 # ------------------------------------------ 0. fused owed wave: every setup is its own arm
-# A fused wave (submit-owed-wave.sh) names a SETUPS_FILE. Each setup is split out into the env and
+# A fused wave names a SETUPS_FILE. Each setup is split out into the env and
 # problems file a single-setup job of that arm would have, prepared by THIS script exactly as such
 # a job is -- its material staged under <shared>/setups/<setup>, which the seal presents at the
 # shared mount to that setup's workers only -- and resolved to the flat <setup>.resolved overlay the

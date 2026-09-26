@@ -178,7 +178,7 @@ def test_a_fused_judges_readonly_set_covers_every_setups_cpf_view(
         views.append((str(view), str(cache)))
     monkeypatch.setenv("HPCAGENT_BENCH_FUSED_SETUPS_DIR", str(setups_dir))
     # os.environ names only ONE setup's view here (as a real fused request would leave it, per
-    # experiments/owed_wave.py stripping the per-problem key from the shared job env) -- the other
+    # the fused planner stripping the per-problem key from the shared job env) -- the other
     # setup's view must still land in plan.readonly, from its resolved overlay alone.
     monkeypatch.setenv("HPCAGENT_BENCH_SERVICE_CANONICAL_PARALLEL_FORM_DIR", views[0][0])
     plan = seal.grading_plan(["/work"])

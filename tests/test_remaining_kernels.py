@@ -937,6 +937,15 @@ def test_a_resize_after_a_tag_only_edit_still_invalidates(module: types.ModuleTy
     assert module.comparable_since_ms("probe_kernel", str(repo)) == resize_ts_ms
 
 
+def test_resizing_an_ungraded_preset_keeps_the_epoch(module: types.ModuleType, tmp_path: pathlib.Path) -> None:
+    """Grading draws around XL and checks correctness at S, so an M (or L) resize leaves every
+    recorded grade comparable: the epoch stays at the last change a grade reads."""
+    repo, manifest, git = init_repo(tmp_path, "probe_kernel")
+    added_ts_ms = commit_manifest(git, manifest, "parameters:\n  M:\n    n: 50\n  XL:\n    n: 100\n", "add")
+    commit_manifest(git, manifest, "parameters:\n  M:\n    n: 25\n  XL:\n    n: 100\n", "shrink M")
+    assert module.comparable_since_ms("probe_kernel", str(repo)) == added_ts_ms
+
+
 #: The real regression, on the real checkout: proves the fix on the actual commit rather than only
 #: on a synthetic fixture. Skips when that commit is not reachable (a shallow clone, or a checkout
 #: predating it) instead of failing a test the environment cannot answer.
@@ -957,7 +966,8 @@ def test_the_real_mixed_tag_commit_does_not_invalidate_heat_3d_or_gemm(module: t
     ).stdout.strip()
     commit_ms = int(commit_ts) * 1000
     since_ms = module.comparable_since_ms(kernel, str(repo))
-    assert since_ms < commit_ms, f"{kernel}: the tag-only commit must not become the comparable epoch"
+    # A later semantic change may move the epoch past it; the tag-only commit itself never is it.
+    assert since_ms != commit_ms, f"{kernel}: the tag-only commit must not become the comparable epoch"
 
 
 def test_comparable_since_ms_is_zero_for_an_unknown_kernel(module: types.ModuleType, tmp_path: pathlib.Path) -> None:

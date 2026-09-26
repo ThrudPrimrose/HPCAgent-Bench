@@ -298,9 +298,6 @@ can mark the placeholder.
   non-effective card on an extraction without them raises (`stats.cost.priced`). Components are
   never recovered by subtraction.
 
-`scripts/migrate_tokens.py <run-root> [--apply]` re-folds `tokens.json` records written by an older
-fold; it is a dry run unless `--apply` is given, and skips run directories `squeue` still lists.
-
 ## 10. Usage metrics and the intervention table
 
 Per task selected by R4/R5: `attempts` (1 + relaunches), `score_calls`, `submit_calls`,

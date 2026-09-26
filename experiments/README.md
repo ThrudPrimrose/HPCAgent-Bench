@@ -26,9 +26,9 @@ flowchart LR
 | `prepare_job.sh`, `materialize_shared.sh` | Stage agent material and prompts into `/shared`, inside the arm's allocation. |
 | `agent_driver.py` | Shards problems and runs the agent workers on each agent node. |
 | `judge_service.py`, `judge_upstream.py` | Router and supervisor of the benchmark judge on each judge slot. |
-| `owed_wave.py`, `submit-owed-wave.sh`, `remaining_kernels.py` | Find and rerun kernels an arm still owes. |
+| `remaining_kernels.py` | The kernels an arm still owes. |
 | `regrade.sbatch`, `mlscale-grade.sbatch` | Re-time stored submissions; grade ML scaling curves. |
-| `check_job.py`, `wave_board.py` | Health check of a running wave; coverage board of every arm. |
+| `wave_board.py` | Coverage board of every arm. |
 
 ## Experiments and rosters
 
@@ -206,7 +206,7 @@ classed by how its latest episode ended:
 | `budget` | the agent's own token cap or timeout | `TOKEN_SCALE`/`TIME_SCALE` times the 1x (usually 2) |
 | `infra` | the job: wall clock, node or judge failure, unknown exit, or a `cancelled` marker | 1x |
 
-The 1x is `owed_wave.POLICY_BUDGETS`, raised to the arm's own budget where it ran with more:
+The 1x is the experiment's policy budget, raised to the arm's own budget where it ran with more:
 
 | Experiment | 1x |
 | --- | --- |
@@ -216,27 +216,7 @@ The 1x is `owed_wave.POLICY_BUDGETS`, raised to the arm's own budget where it ra
 
 Time clamps at 72000 s; a wave's walltime is its longest agent budget plus 3 h staging.
 
-**Planning** (`owed_wave.py`, via `submit-owed-wave.sh`). One fused job per (experiment, model,
-harness) serves every owed kernel of that model from one inference server; each problem row names its
-setup (`<arm>-clean`, plus `.budget<N>x` when scaled). Per-problem keys
-(`owed_wave.PER_PROBLEM_KEYS`: arm, language, packet, budgets, prompts, CPF dirs) go to the setup
-overlay; everything else must be equal across the wave. A wave holds at most `AGENTS_PER_NODE`
-problems (40 for qwen38/oss120b, 20 for kimi27sglang). Every skipped arm or kernel prints a `note:`
-line; read them.
-
-**Contract preflight.** Before writing a wave, the planner compares every setup with the env the
-arm's own submitter launched it with. A rerun may change only its budget, `-clean` identity, commit
-stamp, fused-job files and node counts, images and the model layer's serving keys. Anything else
-(for example `JUDGE_INPUT_MODE`) refuses the plan: a contract change is a new arm through its own
-submitter. `owed_wave.py --preflight --queued` re-checks queued waves against the checkout they will
-start on.
-
-**Baselines.** A treatment pairs with one baseline arm per kernel (`baseline_arms` in
-`hpcagent_bench/envs/registry.yaml`). The planner adds that baseline's owed kernels among the
-treatment's, and skips a skill-less arm that duplicates a baseline.
-
-**Folding back.** `remaining_kernels.py` and `wave_board.py` credit a fused job to every arm it
-served. The figure reader strips `-clean` (`experiments.fold_clean_arms`), and
+**Folding back.** The figure reader strips `-clean` (`experiments.fold_clean_arms`), and
 `population.latest_runs` keeps, per (arm, kernel), the run with the newest valid submission, so a
 rerun that ends without one leaves the earlier answer standing.
 
@@ -245,7 +225,7 @@ rerun that ends without one leaves the earlier answer standing.
 | File | Meaning |
 | --- | --- |
 | `rerun-kernels.tsv` | `(arm, kernel)` owed whatever its rows say (a judge rank died mid-run); `class` blank = `infra`, or `budget`. |
-| `rerun-lost.tsv` | Setups whose job dirs are gone; their rows survive in the frozen observations. `RERUN_LOST=1` reruns them whole. |
+| `rerun-lost.tsv` | Setups whose job dirs are gone; their rows survive in the frozen observations. |
 | `tainted_submissions.tsv` | Rows void under the arm's contract; the analysis drops them and a run of only tainted rows never supersedes an earlier run. |
 
 Flip `status` to `done` once a rerun's rows land. Frozen observations

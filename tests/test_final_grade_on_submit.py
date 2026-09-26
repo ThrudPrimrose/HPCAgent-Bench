@@ -27,7 +27,6 @@ import threading
 import time
 import urllib.request
 from collections.abc import Callable, Iterator
-from types import ModuleType
 from typing import Any
 
 import pytest
@@ -40,7 +39,6 @@ from hpcagent_bench.harness.optimizers import NoOpOptimizer
 from hpcagent_bench.harness.task import Task
 from hpcagent_bench.stats import score_rule
 from tests.conftest import RANK_ENV_VARS
-from tests.test_fused_owed_wave import load, setup_env
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 KERNEL = "scaled_add"  # the smallest fast C kernel: one FMA per element
@@ -272,53 +270,10 @@ def test_the_extractor_reads_a_jobs_in_job_final_grade_exactly_as_a_regrade_wave
 def test_the_regrade_loops_default_globs_count_an_in_job_final_grade(graded: Graded, tmp_path: pathlib.Path) -> None:
     """finalize_grade_owed.py and wave_board.py plan and report from these globs: a job's own final grade
     missing from them is re-graded by a wave for nothing and shown as owed."""
-    wave_board = load("wave_board")
+    import wave_board
+
     patterns = wave_board.default_regrade_patterns(tmp_path, graded.judge.runs)
     assert wave_board.final_regrades(patterns) == {(JOB, RUN, KERNEL): timing.FINAL_GRADE_REDUCTION}
-
-
-# ------------------------------------------------------------------ the arms that turn it on
-
-
-@pytest.fixture(name="owed", scope="module")
-def owed_fixture() -> ModuleType:
-    return load("owed_wave")
-
-
-@pytest.mark.parametrize(
-    ("arm", "experiment", "flag"),
-    [
-        ("cpf-llr-focus40-qwen38-c", "llr-focus40", "1"),
-        ("cpf-llr-focus40-qwen38-c-caveman", "llr-focus40", "1"),
-        ("llrblind-qwen38-c", "llr-focus40-blind", "1"),
-        ("scicomp-dc-qwen38-plain", "scicomp-focus40", None),
-        ("git-scicomp-qwen38-c-repo", "git-scicomp", None),
-        ("mlscale-qwen38-hip", "mlscale", None),
-        ("harness20-qwen38-claude", "harness20", None),
-    ],
-)
-def test_an_owed_wave_turns_the_in_job_final_grade_on_for_llr_arms_only(
-    owed: ModuleType, arm: str, experiment: str, flag: str | None
-) -> None:
-    """An LLR arm launched before the flag gets it on its rerun; scicomp keeps its regrade waves and
-    the ML track has its scaling grade, so a flag that leaked to them -- even from the arm's own env
-    -- would spend their judges' slots on grades nothing reads."""
-    carried = {} if flag else {final_grade.ENV_KEY: "1"}
-    setup = owed.make_setup(setup_env(arm, **carried), arm, experiment, "abc1234")
-    wave = owed.build_wave(f"owed-{experiment}-qwen38-claude-w1", [owed.Owed(setup, {"kernel": "k"}, "infra")], "r")
-    assert dict(wave.job_env).get(final_grade.ENV_KEY) == flag
-
-
-def test_an_owed_llr_rerun_of_an_arm_launched_before_the_flag_keeps_its_contract(owed: ModuleType) -> None:
-    """The flag is a grading step after the answer, not a condition the agent sees: turning it on
-    for an arm launched without it is not a new identity."""
-    arm = "cpf-llr-focus40-qwen38-c"
-    reference = dict(setup_env(arm))
-    setup = owed.make_setup(tuple(reference.items()), arm, "llr-focus40", "abc1234")
-    setup = dataclasses.replace(setup, reference=tuple(reference.items()))
-    wave = owed.build_wave("owed-llr-focus40-qwen38-claude-w1", [owed.Owed(setup, {"kernel": "k"}, "infra")], "r")
-    assert dict(wave.job_env)[final_grade.ENV_KEY] == "1"
-    owed.refuse_contract_drift([wave], owed.serving_keys(str(REPO), "qwen38"))
 
 
 # ------------------------------------------------------------------ the job's teardown

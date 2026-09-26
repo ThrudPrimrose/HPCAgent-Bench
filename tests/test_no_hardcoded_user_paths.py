@@ -141,8 +141,6 @@ ALLOW = {
     "docs/configuration.md": "shows the CSCS site layer's values next to the generic ones",
     "pyproject.toml": "package author contact (PyPI metadata), not a runtime value",
     "hpcagent_bench/observations_extract.py": "reads legacy MCP server/env keys of already-recorded rows",
-    "experiments/owed_wave.py": "reads legacy MCP server/env keys of already-recorded worker dirs",
-    "tests/test_fused_owed_wave.py": "fixtures of legacy recorded keys",
     "tests/test_extract_llr40_task_rows.py": "fixtures of legacy recorded keys",
     "tests/test_ablation_stats.py": "fixtures of legacy recorded keys",
     "tests/test_harbor_images.py": "asserts a generated Harbor task names no storage mount",

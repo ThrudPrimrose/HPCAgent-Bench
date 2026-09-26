@@ -156,7 +156,7 @@ def test_a_fused_wave_covers_only_the_kernels_it_was_planned_with(
 ) -> None:
     """An arm owing b and c with a queued owed wave holding only b showed ``running``,
     as if c were covered too, and no wave would ever be planned for c from the board. A fused wave
-    grades only its problems file's kernels (owed_wave.queue_state reads the queue the same way);
+    grades only its problems file's kernels;
     a snapshot that cannot be read stays ``running`` rather than guess."""
     arm = "harness20-qwen38-claude"
     runs = tmp_path / "runs" / "harness20-20260918"

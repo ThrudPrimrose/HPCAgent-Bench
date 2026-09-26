@@ -3,7 +3,7 @@
 A campaign is done when every (arm, kernel) of its roster has an answer. What is missing is
 **owed** and gets rerun; what already ran is never run again. This page is the overview; the full
 rules are in `experiments/README.md` ("Owed kernels") and the step-by-step runbook in
-`experiments/LAUNCH.md` section 9. Collecting and extracting the finished data is
+`experiments/LAUNCH.md`. Collecting and extracting the finished data is
 [data_collection.md](data_collection.md).
 
 ## What "owed" means
@@ -22,8 +22,8 @@ Every other roster kernel is owed, classed by how its latest episode ended:
 | `budget` | 124 / 125: the harness's own timeout or token cap | the arm's 1x scaled by `TOKEN_SCALE`/`TIME_SCALE` |
 | `infra` | cancelled, the job died (wall clock, node failure, judge crash), unknown exit, no episode at all, or a clean exit (0, 123, 126, context overflow) that left no grade | 1x |
 
-The 1x is `owed_wave.rerun_base`: the larger of the experiment's policy budget and the arm's own
-unscaled budget, so a second budget rerun does not compound; time is capped at 20 h. Nothing
+The 1x is the larger of the experiment's policy budget and the arm's own unscaled budget, so a
+second budget rerun does not compound; time is capped at 20 h. Nothing
 counts reruns: a kernel stays owed until it is delivered. Inside one episode a crashed agent is
 relaunched from an empty workspace up to `AGENT_CRASH_ATTEMPTS` (3) times; a timeout is not.
 
@@ -43,44 +43,6 @@ A crashed episode can hold a correct `/score` it never promoted to `/submit`. Gr
 (`hpcagent-bench regrade worklist --scope unpromoted`, then `regrade.sbatch ... run`) is cheaper
 than a second agent, and the planner leaves out every (arm, kernel) such a promotion worklist
 answers (`PROMOTING=`).
-
-## Planning and submitting owed waves
-
-`experiments/submit-owed-wave.sh` (planner `experiments/owed_wave.py`) turns the owed kernels into
-fused jobs, one per (experiment, model, harness), and is a dry run unless `SUBMIT=1`. Each owed arm
-is rebuilt from its newest launch env with the `-clean` arm name and the class budget; a plan that
-would change an arm's contract (any key but budget, identity, images and the model's serving keys)
-is refused. Every rerun, a budget repeat included, runs in its arm's own submission mode
-(`AGENT_SINGLE_SUBMISSION`, `AGENT_SUBMISSION_POLICY_FILE` as the arm's own submitter launched it),
-so an open-mode arm's repeat stays open and its rows pool with the arm's under one mode. Arms with a queued or running job are skipped, so planning twice never double-submits;
-when `squeue` does not answer, the dry run still plans and `SUBMIT=1` refuses.
-
-```bash
-cd experiments
-. ./env.sh
-RUNS=$SCRATCH/hpcagent-bench-runs WORK=$SCRATCH/owed/llr-focus40-qwen38
-
-# 1. the owed list, one <arm>.txt per arm that owes anything
-python remaining_kernels.py --run-root "$RUNS"/cpf-llr-focus40-<date> \
-    --run-root "$RUNS"/owed-llr-focus40-<date> --tag llr-focus40 \
-    --arm-prefix cpf-llr-focus40-qwen38 --out-dir "$WORK/owed"
-
-# 2. dry run: env, problems and setups files under OUT, a contract PASS/FAIL per wave, no sbatch
-SUBMIT=0 ./submit-owed-wave.sh MODEL=qwen38 EXPERIMENTS=llr-focus40 \
-    KERNELS_FILE="$WORK/owed/cpf-llr-focus40-qwen38-c.txt" TOKEN_SCALE=2 TIME_SCALE=2 OUT="$WORK/wave"
-
-# 3. submit the same plan (the account comes from scripts/cscs/account_env.sh)
-. ../scripts/cscs/account_env.sh
-SUBMIT=1 ./submit-owed-wave.sh MODEL=qwen38 EXPERIMENTS=llr-focus40 \
-    KERNELS_FILE="$WORK/owed/cpf-llr-focus40-qwen38-c.txt" TOKEN_SCALE=2 TIME_SCALE=2 OUT="$WORK/wave"
-
-# 4. health of the new wave after 30-45 minutes
-python check_job.py <job id>
-```
-
-A wave's job is `owed-<experiment>-<model>-<harness>-w<N>` and writes the run root
-`owed-<experiment>-<date>`; extraction and `remaining_kernels.py` credit its rows to each arm it
-served. After the waves end, the same dry run prints `no owed kernels for <model>`.
 
 ## Checkpointing and resume
 

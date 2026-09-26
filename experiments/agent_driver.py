@@ -1638,9 +1638,6 @@ def cost_record_fields(
     (docs/token_accounting.md). Under fresh relaunch (T5) the task IS its final attempt, which is
     what `tokens` and the breakdown measure; what the crashed attempts spent is reported beside them
     as the `_crashed` pair and added to nothing (T1-T2).
-
-    Shared with ``experiments/migrate_tokens.py`` so a re-folded record and a freshly written one cannot
-    come out of two implementations of the same arithmetic.
     """
     fields: dict[str, float | int | str | None] = dict(cost_breakdown(transcript, output_counter))
     attempts, effective, billed, effective_crashed, billed_crashed = task_token_totals(worker_dir, output_counter)
@@ -3011,7 +3008,7 @@ def run_agent(
     return returncode
 
 
-#: FUSED OWED WAVE (experiments/submit-owed-wave.sh): one job, one inference server, owed kernels of
+#: FUSED OWED WAVE: one job, one inference server, owed kernels of
 #: many setups of one model/harness/experiment. Every problem names its ``setup`` (and its ``arm``).
 #: Each runs as its own driver process whose environment is the job's with the setup's resolved
 #: overlay applied -- exactly the environment a single-setup job of that arm would give run_agent --

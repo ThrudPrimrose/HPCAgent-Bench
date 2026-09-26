@@ -1658,7 +1658,7 @@ def record_call(
             commit_sha=sha,
             detail=cap_detail(detail or (score.detail if score is not None else "") or ""),
             timing_reduction=(score.timing_reduction if score is not None else None),
-            # The stamps check_job reads a /score row's bracket off; NULL = no verdict to stamp.
+            # The /score row's bracket stamps; NULL = no verdict to stamp.
             grading_protocol=(score.grading_protocol or None) if score is not None else None,
             baseline_policy=(score.baseline_policy or None) if score is not None else None,
             distribution=distribution,

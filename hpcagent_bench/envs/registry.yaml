@@ -132,7 +132,7 @@ campaigns:
   mlscale: {experiment: mlscale, name: "ML Scaling@10, Multi-GPU", device: GPU, tag: mlscale20}
   mlscale-part2: {experiment: mlscale-part2, name: "ML Scaling Part 2@10, Multi-GPU", device: GPU, tag: mlscale20}
 
-# Run roots a FUSED OWED WAVE writes (experiments/owed_wave.py plan_waves): <prefix>-<experiment>-<date>,
+# Run roots a FUSED OWED WAVE writes: <prefix>-<experiment>-<date>,
 # one job serving many arms of one experiment, so no campaign prefix above matches the root. The rows
 # inside carry their real arm names; only the root is named after the experiment. The glob is
 # <prefix>-<digit>*, so owed-llr-focus40 does not swallow owed-llr-focus40-blind. The wave board reads
@@ -178,7 +178,7 @@ experiment_baselines:
 # that model's own arm where it differs. An arm_aliases spelling is never named here: its canonical arm is.
 # `language` is the arm's LANGUAGE: C on a GPU is OpenMP offload, device-resident.
 # The owed planner reruns a baseline's OWN owed kernels wherever a planned treatment needs them, and
-# never a separate control per treatment (experiments/owed_wave.py baseline_owed).
+# never a separate control per treatment.
 baseline_arms:
   loop_level_reasoning/cpu/c: {arm: "cpf-llr-focus40-{model}-c"}
   loop_level_reasoning/gpu/hip: {arm: "gpu-llr-focus40-{model}-hip"}

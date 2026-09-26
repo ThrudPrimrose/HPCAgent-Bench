@@ -551,7 +551,7 @@ def _call(db, status, *, route: str = "score", run_id: str = "t", score=None, ke
 
 
 def test_a_scored_call_carries_its_grading_protocol_and_baseline_policy(tmp_path: pathlib.Path) -> None:
-    """check_job reads a /score row's timing bracket off ``grading_protocol``; an unstamped row
+    """A /score row carries its timing bracket off ``grading_protocol``; an unstamped row
     cannot be checked at all."""
     db = str(tmp_path / "r.db")
     stamped = _correct_score(grading_protocol="sealed-nonce-v1+host-monotonic", baseline_policy="single-v1:c")
@@ -901,7 +901,7 @@ def test_a_database_written_before_the_cell_table_still_opens_and_gains_it(tmp_p
 
 def test_a_cell_records_which_references_were_timed(tmp_path: pathlib.Path) -> None:
     """Under a best-of denominator the set the winner was chosen from is what makes the choice
-    checkable (``experiments/check_job.py`` flags a cell that lost a compiled reference)."""
+    checkable (a cell that lost a compiled reference is visible)."""
     db = str(tmp_path / "r.db")
     cell = _cell("cfg0:large0", 2.0, baseline="numba", baseline_candidates="c+numba+numpy")
     recording.record(
