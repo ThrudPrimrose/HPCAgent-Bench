@@ -37,6 +37,15 @@ AGENT_HARNESS = pathlib.Path(__file__).resolve().parents[1] / "containers" / "ag
 SECRET = "sk-test-1nf3r3nc3-s3rv1c3-l34k-c4n4ry"
 
 
+#: The request header each service auth scheme authenticates with (what a Claude client sends).
+AUTH_HEADERS = {"bearer": "Authorization", "x-api-key": "x-api-key"}
+
+
+def messages_url(base_url: str) -> str:
+    """The Anthropic Messages endpoint under a base URL declared with its ``/v1`` path."""
+    return f"{base_url.rstrip('/')}/messages"
+
+
 def load(name: str, path: pathlib.Path) -> types.ModuleType:
     """Import a module by path, the way the driver loads the launcher's helpers."""
     spec = importlib.util.spec_from_file_location(name, path)
@@ -390,9 +399,9 @@ def test_an_anthropic_service_arm_sends_the_key_header_the_launcher_chose(
     resolved = service.from_environ(arm)
     exported = service.launcher_env(resolved)
     body = http_chat_json(
-        f"{service.messages_url(exported['VLLM_BASE_URL'])}",
+        f"{messages_url(exported['VLLM_BASE_URL'])}",
         {"model": exported["VLLM_SERVED_MODEL"], "max_tokens": 16, "messages": [{"role": "user", "content": "hi"}]},
-        {service.auth_header(resolved): SECRET, "anthropic-version": service.ANTHROPIC_VERSION},
+        {AUTH_HEADERS[resolved.auth]: SECRET, "anthropic-version": service.ANTHROPIC_VERSION},
         10.0,
         "fake service unreachable",
     )
@@ -414,10 +423,10 @@ def test_the_muse_spark_arm_reaches_metas_messages_surface_with_a_bearer_key(
     x-api-key, which is why the auth spelling is per service and not per shape."""
     root, handler = fake_anthropic
     resolved = service.from_environ(muse_arm(INFERENCE_SERVICE_BASE_URL=f"{root}/v1"))
-    assert service.auth_header(resolved) == "Authorization"
+    assert AUTH_HEADERS[resolved.auth] == "Authorization"
     exported = service.launcher_env(resolved)
     http_chat_json(
-        service.messages_url(exported["VLLM_BASE_URL"]),
+        messages_url(exported["VLLM_BASE_URL"]),
         {"model": exported["VLLM_SERVED_MODEL"], "max_tokens": 16, "messages": [{"role": "user", "content": "hi"}]},
         {"Authorization": f"Bearer {SECRET}", "x-api-key": SECRET, "anthropic-version": service.ANTHROPIC_VERSION},
         10.0,

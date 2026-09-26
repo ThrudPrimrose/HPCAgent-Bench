@@ -45,7 +45,7 @@ def metaschedule_trials() -> int:
 
 class TVMFramework(Framework):
     """Framework binding for Apache TVM; one class serves both GPU (cuda) and CPU (llvm) backends via
-    ``self.info["arch"]``. An Optimizer: tune_tir (MetaSchedule) searches within optimize_budget's trials."""
+    ``self.info["arch"]``. An Optimizer: tune_tir (MetaSchedule) searches within ``OptimizeBudget.from_env()``'s trials."""
 
     __slots__ = ()
 

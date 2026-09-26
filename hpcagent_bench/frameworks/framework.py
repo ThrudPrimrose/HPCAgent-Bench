@@ -982,21 +982,12 @@ class Framework:
     # Timing: create/start/stop/free_timer, a host wall-clock by default; frameworks with their own clock
     # also return TimingResult.native. The timer lives in harness code, outside the kernel.
 
-    #: Whether this framework optimizes the kernel before it is timed, within :meth:`optimize_budget`.
+    #: Whether this framework optimizes the kernel before it is timed, within ``OptimizeBudget.from_env()``.
     is_optimizer: bool = False
-
-    def optimize_budget(self) -> "OptimizeBudget | None":
-        """The :class:`~hpcagent_bench.optimize.OptimizeBudget` this framework may spend, or ``None``
-        (``$HPCAGENT_BENCH_OPTIMIZE_BUDGET``)."""
-        if not self.is_optimizer:
-            return None
-        from hpcagent_bench.optimize import OptimizeBudget
-
-        return OptimizeBudget.from_env()
 
     def optimize(self, program: KernelImpl, bench: Benchmark, bdata: BenchData) -> KernelImpl:
         """Optimize ``program`` once before the timed loop and return the directly-callable handle (default:
-        identity), within :meth:`optimize_budget`; ``bench``/``bdata`` give real shapes and dtypes."""
+        identity), within ``OptimizeBudget.from_env()``; ``bench``/``bdata`` give real shapes and dtypes."""
         return program
 
     def build_with_cache(self, bench: Benchmark, tag: str, build: Callable[[], ArtifactT]) -> ArtifactT:

@@ -221,13 +221,6 @@ def auto_pages(language: str = "any", image: str | None = None, multinode: bool 
     return packets.expand_skill_token("*", language, image, multinode)
 
 
-def skills_section(
-    language: str, extra_root: str = "", image: str = "cpu", also: Sequence[str] = (), language_packet: bool = True
-) -> str:
-    """The packet's skill index: one trigger line per page :func:`packet_skills` selects."""
-    return skill_index(packet_skills(language, extra_root, also, language_packet, image=image))
-
-
 def packet_skills(
     language: str,
     extra_root: str = "",

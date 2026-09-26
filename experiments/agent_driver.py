@@ -2099,28 +2099,6 @@ def open_tool_use_index(tail: str) -> int | None:
     return open_index
 
 
-def timed_out_mid_tool_use(log_path: pathlib.Path) -> bool:
-    """True when :func:`api_timeout` fired on a stream that died while announcing a tool call.
-
-    The block was opened (its ``content_block_start`` reached the client) and nothing else came --
-    no argument deltas, no ``content_block_stop`` -- until the client gave up. On qwen38 that is not
-    a dead server: SGLang's qwen3_coder parser sends each argument only once its ``</parameter>`` is
-    decoded, and the request was still decoding when Bun's ~300 s fetch socket timeout cut it (the
-    server drops the request from its batch when the client errors). run_cluster.sh lifts that wall
-    (API_FORCE_IDLE_TIMEOUT=0, CLAUDE_STREAM_IDLE_TIMEOUT_MS).
-    """
-    if not api_timeout(log_path):
-        return False
-    try:
-        with log_path.open("rb") as handle:
-            handle.seek(0, os.SEEK_END)
-            handle.seek(max(0, handle.tell() - RESULT_TAIL_BYTES))
-            tail = handle.read().decode("utf-8", "replace")
-    except OSError:
-        return False
-    return open_tool_use_index(tail) is not None
-
-
 def stream_idle_timeout_module() -> ModuleType:
     """``stream_idle_timeout.py`` from beside this file, imported on first use. Same reason
     ``harness_module`` is not a top-level import: tests load this file by path with nothing on
@@ -2178,7 +2156,7 @@ def watch_dead_stream(
 ) -> None:
     """Kill ``process`` when its stream dies mid ``tool_use`` and stays silent past ``threshold_s``.
 
-    The qwen38 shape (see :func:`timed_out_mid_tool_use`): a stream that opens a ``tool_use``
+    The qwen38 shape: a stream that opens a ``tool_use``
     content block and then sends NOTHING. The CLI's byte watchdog
     (``CLAUDE_BYTE_STREAM_IDLE_TIMEOUT_MS``) is installed only for api.anthropic.com, so against a
     local server the only CLI-side walls are the ones run_cluster.sh sets from the same value; this

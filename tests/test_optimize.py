@@ -52,18 +52,10 @@ def test_backend_caps_delegate_to_budget_fields() -> None:
 
 
 def test_framework_declares_optimizer_status() -> None:
-    from hpcagent_bench.frameworks.framework import Framework, generate_framework
+    from hpcagent_bench.frameworks.framework import generate_framework
 
     np_fw = generate_framework("numpy")
     assert np_fw.is_optimizer is False
-    assert np_fw.optimize_budget() is None
-
-    class Opt(Framework):
-        is_optimizer = True
-
-    t = Opt("numpy")
-    b = t.optimize_budget()
-    assert isinstance(b, OptimizeBudget)
 
 
 def test_tvm_and_triton_are_optimizers() -> None:

@@ -62,7 +62,6 @@ HARNESSES_BY_API = {
 CLAUDE_KEY_VARIABLE = {AUTH_BEARER: "ANTHROPIC_AUTH_TOKEN", AUTH_KEY_HEADER: "ANTHROPIC_API_KEY"}
 
 #: The request header the key is sent in, per auth spelling.
-AUTH_HEADERS = {AUTH_BEARER: "Authorization", AUTH_KEY_HEADER: "x-api-key"}
 
 #: The Messages API version every Anthropic-format service pins requests to.
 ANTHROPIC_VERSION = "2023-06-01"
@@ -163,16 +162,6 @@ def from_environ(environ: Mapping[str, str]) -> Service:
 def claude_key_variable(service: Service) -> str:
     """The environment variable the claude CLI's key belongs in for this service."""
     return CLAUDE_KEY_VARIABLE[service.auth]
-
-
-def auth_header(service: Service) -> str:
-    """The request header this service authenticates with."""
-    return AUTH_HEADERS[service.auth]
-
-
-def messages_url(base_url: str) -> str:
-    """The Anthropic Messages endpoint under a base URL declared with its ``/v1`` path."""
-    return f"{base_url.rstrip('/')}/messages"
 
 
 def launcher_env(service: Service) -> dict[str, str]:

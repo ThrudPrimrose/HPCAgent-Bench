@@ -3,7 +3,7 @@
 """make_problems.py --packet: the hpcagent_bench.packets spelling of the skill packet a task text
 carries, checked against the --skills/--skill spellings it replaces.
 
---packet must render THROUGH the same skill_index/skills_section path as the deprecated flags, so
+--packet must render THROUGH the same skill_index path as the deprecated flags, so
 an ablation arm migrated to it reads the identical trigger text for every page set the two
 spellings can both name. Pages render in spec and definition order (Packet.pages), so a packet
 spelling reproduces a launcher's repeated --skill list byte for byte.
