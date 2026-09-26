@@ -3,7 +3,7 @@
 """Smoke tests for the collection/reporting subcommands folded in from ``scripts/``.
 
 The former standalone ``scripts/`` entrypoints (run_benchmark / run_framework /
-run_sparse_benchmark / plot_results / quickstart / pluto_affine_survey) are now
+run_sparse_benchmark / plot / quickstart / pluto_affine_survey) are now
 ``hpcagent_bench`` CLI subcommands dispatching DIRECTLY to importable package functions.
 These tests assert, without any toolchain (no compile, no plot, no Pluto):
 
@@ -179,7 +179,7 @@ def test_plot_forwards_db_and_output_defaults(monkeypatch) -> None:
     kwargs = calls[0]
     assert kwargs["db"] is None  # resolved downstream to record.db_path, the one source of truth
     assert kwargs["output"] == PLOTS_DIR + "/heatmap.pdf"
-    assert kwargs["preset"] == "S"  # plot's default preset (matches the legacy plot_results.py)
+    assert kwargs["preset"] == "S"  # plot's default preset (the heatmap default)
 
 
 def test_bad_preset_is_rejected() -> None:

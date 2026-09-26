@@ -6,7 +6,6 @@ effects are contained in ``tmp_path``."""
 
 import importlib.util
 import os
-import pathlib
 import shutil
 import subprocess
 import sys
@@ -15,7 +14,6 @@ import time
 import pytest
 from sqlmodel import Session
 
-import hpcagent_bench
 
 # Read, not restated: the plot divides by whichever framework the judge grades against, and a
 # fixture naming its own was green until that default moved (numpy -> numba) and left the figure
@@ -38,13 +36,6 @@ KERNEL = "tsvc_2_s212"  # small, fast-loading loop_level_reasoning kernel with a
 # Substrings that mark a plotter failure as a missing/broken LaTeX toolchain rather than a genuine
 # pipeline regression, turning it into a SKIP.
 _LATEX_ERROR_SIGNATURES = ("latex", "usetex", "dvipng", "kpathsea", "cm-super", "type1cm")
-
-
-def _plot_script_path():
-    """The heatmap plotter, resolved relative to the installed package; returned even if absent so
-    the caller can SKIP with a clear message."""
-    root = pathlib.Path(hpcagent_bench.__file__).resolve().parent.parent
-    return root / "statistics" / "plot_results.py"
 
 
 def _skip_unless_plot_toolchain() -> None:
@@ -102,14 +93,8 @@ def _seed_results(db, specs, samples: int = 4) -> None:
 
 
 def _run_plot(workdir):
-    """Drive the heatmap plotter over ``workdir/hpcagent_bench.db``; SKIPs when the script is gone or LaTeX
-    is incomplete, hard-fails on any other non-zero exit."""
-    script = _plot_script_path()
-    if not script.exists():
-        pytest.skip(
-            f"plot script not found at {script} (likely moved into the CLI); "
-            "point _plot_script_path at the new entrypoint"
-        )
+    """Drive ``hpcagent-bench plot`` over ``workdir/hpcagent_bench.db``; SKIPs when LaTeX is incomplete,
+    hard-fails on any other non-zero exit."""
     # Point the plotter at THIS test's seeded DB. cwd is not enough: recording.base_db_path anchors
     # to the REPO, so without this the run reads whatever hpcagent_bench.db the checkout happens to
     # carry -- which is how this test passed for years while asserting nothing about its own
@@ -118,7 +103,7 @@ def _run_plot(workdir):
     env["HPCAGENT_BENCH_RECORD_DB_PATH"] = str(workdir / "hpcagent_bench.db")
     env["HPCAGENT_BENCH_RECORD_ALLOW_MEMORY_DB"] = "1"  # pytest tmpdirs are tmpfs on many hosts
     proc = subprocess.run(
-        [sys.executable, str(script)],
+        [sys.executable, "-m", "hpcagent_bench", "plot"],
         cwd=str(workdir),
         env=env,
         capture_output=True,
@@ -130,7 +115,7 @@ def _run_plot(workdir):
         stderr = proc.stderr.lower()
         if any(sig in stderr for sig in _LATEX_ERROR_SIGNATURES):
             pytest.skip("matplotlib usetex/LaTeX toolchain incomplete: " + proc.stderr.strip()[-300:])
-        pytest.fail(f"plot_results.py failed (rc={proc.returncode}):\n{proc.stderr[-2000:]}")
+        pytest.fail(f"hpcagent-bench plot failed (rc={proc.returncode}):\n{proc.stderr[-2000:]}")
     return one_plot(workdir / PLOTS_DIR, "heatmap.pdf")
 
 

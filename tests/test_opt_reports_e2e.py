@@ -308,7 +308,7 @@ def test_the_gpu_canon_report_replays_the_host_and_the_device_unit(
 @pytest.mark.integration
 def test_the_run_plots_a_speedup_table(swept: pathlib.Path) -> None:
     """The whole point of running three columns into one DB: a speedup table against numpy. Rendered
-    through the CLI verb, not statistics/plot_results.py -- that shim is on its way out."""
+    through the CLI verb."""
     output_name = "heatmap.pdf"
     run_cli(
         swept,
