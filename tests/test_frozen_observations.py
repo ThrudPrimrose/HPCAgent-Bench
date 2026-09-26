@@ -1,6 +1,6 @@
 # Copyright 2021 ETH Zurich and the HPCAgent-Bench authors.
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Frozen observations (2026-09-19 data loss): the extracted rows of job dirs whose judge DBs were
+"""Frozen observations (data loss): the extracted rows of job dirs whose judge DBs were
 deleted join the live rows everywhere a reader walks judge DBs -- the extractor, remaining_kernels.py
 and the wave board -- and the live DB wins, job by job. A setup listed in rerun-lost.tsv shows as
 ``rerun`` on the board until its rerun is done."""
@@ -34,7 +34,7 @@ from hpcagent_bench import frozen_observations  # noqa: E402
 
 MODELS = ("kimi27sglang", "oss120b", "qwen38", "glm53")
 ARM = "cpf-llr-focus40-qwen38-fortran"
-#: An arm the registry's dropped_arms still names (cpfsrc v1, out since 2026-09-19).
+#: An arm the registry's dropped_arms still names (cpfsrc v1, out since).
 DROPPED_ARM = "cpf-llr-focus40-qwen38-c-cpfsrc"
 ROOT = "cpf-llr-focus40-20260917"
 #: After any real manifest commit, so comparable_since_ms never gates these fake kernels out.
@@ -151,7 +151,7 @@ def test_delivered_drops_a_grade_made_before_its_episodes_final_attempt() -> Non
 
 
 def test_delivered_never_counts_a_row_stored_under_adhoc() -> None:
-    """2026-09-22 user decision: a grade the judge filed under ``adhoc`` (or an extraction retagged
+    """A grade the judge filed under ``adhoc`` (or an extraction retagged
     from it) has no episode identity, so a lost job's frozen copy of it is no delivery either."""
     rows = [
         {**frozen_row("1", "submission", "a"), "run_id": "adhoc", "arm": "adhoc"},
@@ -315,8 +315,8 @@ def test_rerun_setups_reads_every_setup_not_yet_done_under_its_identity(
 
 
 def test_the_tracked_rerun_list_names_every_lost_setup_pending(board: types.ModuleType) -> None:
-    """experiments/rerun-lost.tsv is the tracked record (2026-09-19): 19 setups, none rerun yet; four
-    host-resident GPU triton/c-openmp setups left it on 2026-09-21 with their arms' retirement."""
+    """Experiments/rerun-lost.tsv is the tracked record: 19 setups, none rerun yet; four
+    host-resident GPU triton/c-openmp setups left it with their arms' retirement."""
     with board.RERUN_LOST.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader((line for line in handle if not line.startswith("#")), delimiter="\t"))
     assert len(rows) == 15

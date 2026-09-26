@@ -168,11 +168,11 @@ def scored_relaunch(early: float, late: float | None) -> pd.DataFrame:
 
 @pytest.mark.parametrize(("early", "late", "kept"), [
     (8.0, 2.0, [100, 700]),  # the earlier attempt answered better: it stands
-    (2.0, 8.0, [100, 1200]),  # the final attempt answered better: the reading before 2026-09-25
+    (2.0, 8.0, [100, 1200]),  # the final attempt answered better: the earlier reading
     (8.0, None, [100, 700]),  # the final attempt answered nothing: the earlier answer is not lost
 ])  # fmt: skip
 def test_a_relaunched_task_keeps_its_best_attempts_answer(early: float, late: float | None, kept: list[int]) -> None:
-    """USER 2026-09-25: a task's answer is its best verified answer over its attempts, so a crash
+    """A task's answer is its best verified answer over its attempts, so a crash
     after a good answer no longer turns the kernel unsolved."""
     frame = scored_relaunch(early, late)
     with warnings.catch_warnings(record=True) as caught:
@@ -251,7 +251,7 @@ def adhoc_frame() -> pd.DataFrame:
 
 
 def test_every_row_stored_under_adhoc_is_dropped_with_a_warning() -> None:
-    """2026-09-22 user decision: a grade filed with no run id has no episode identity, so it answers
+    """A grade filed with no run id has no episode identity, so it answers
     no arm's kernel -- retagged onto a worker or not -- and the kernel is owed a rerun instead."""
     with pytest.warns(UserWarning, match="dropped 3 row"):
         kept = experiments.drop_adhoc_rows(adhoc_frame())
@@ -301,7 +301,7 @@ def test_a_campaign_with_no_clean_arm_is_left_alone() -> None:
 
 
 def test_a_clean_rerun_folds_into_the_arm_it_re_ran_and_keeps_every_row() -> None:
-    """Spec X9 (2026-09-18 user rule): the suffix names a wave, not a condition, so the clean arm is
+    """Spec X9 (user rule): the suffix names a wave, not a condition, so the clean arm is
     reported under the arm it re-ran and both waves' rows stay for the latest run to choose from."""
     kept = experiments.fold_clean_arms(clean_frame())
     assert len(kept) == len(clean_frame())
@@ -430,20 +430,20 @@ def test_a_column_no_row_in_the_table_ever_recorded_still_fills_from_the_arm_nam
         ("llrblind-oss120b-fortran-skills", "llrblind-cmp-oss120b-fortran-skills"),
         ("llrblind-cmp-qwen38-c", "llrblind-cmp-qwen38-c"),
         ("cpf-llr-focus40-qwen38-c", "cpf-llr-focus40-qwen38-c"),
-        # registry arm_aliases (2026-09-24): the dc plain CPU arm is the perf-playbook plain arm
+        # registry arm_aliases: the dc plain CPU arm is the perf-playbook plain arm
         ("scicomp-dc-qwen38-plain", "scicomp-perf-playbook-qwen38-plain"),
         ("scicomp-dc-qwen38-plain-clean", "scicomp-perf-playbook-qwen38-plain-clean"),
         ("scicomp-dc-gpu-qwen38-hip-plain", "scicomp-dc-gpu-qwen38-hip-plain"),
     ],
 )
 def test_a_renamed_blind_arm_reads_under_its_current_name(arm: str, folded: str) -> None:
-    """2026-09-19: llrblind-cmp is the old llrblind arm renamed. Read as two arms, a blind pair sees
+    """``llrblind-cmp`` is the old llrblind arm renamed. Read as two arms, a blind pair sees
     only half of its kernels, and a cmp arm must never fold a second time."""
     assert experiments.renamed_arm(arm) == folded
 
 
 def test_the_dc_and_perf_playbook_spellings_read_as_one_arm() -> None:
-    """2026-09-24 user: "dc should be an alias for perf playbook": both spellings reach analysis as
+    """ "dc should be an alias for perf playbook": both spellings reach analysis as
     ONE arm, so the latest run per kernel picks between them."""
     frame = pd.DataFrame(
         {"arm": ["scicomp-dc-oss120b-plain-clean", "scicomp-perf-playbook-oss120b-plain"], "benchmark": ["a", "a"]}
@@ -500,7 +500,7 @@ def graded_stamps(frame: pd.DataFrame) -> list[int]:
     ],
 )
 def test_a_scicomp_episode_is_answered_by_its_first_real_submit(graded: list[tuple[str, str]], kept: list[int]) -> None:
-    """2026-09-24 user decision: on scientific_computing the first ``/submit`` is the answer, so a
+    """On scientific_computing the first ``/submit`` is the answer, so a
     later verified one cannot replace an agent failure; only a judge fault, which graded nothing,
     lets the next ``/submit`` stand in. Task and call rows are never touched."""
     frame = graded_episode("xsbench", graded)

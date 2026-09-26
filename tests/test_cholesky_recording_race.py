@@ -1,6 +1,6 @@
 # Copyright 2026 ETH Zurich and the HPCAgent-Bench authors.
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Regression test for the 2026-09-15 compiler-baseline sweep: cholesky crashed on EVERY column
+"""Regression test for the compiler-baseline sweep: cholesky crashed on EVERY column
 (numpy, numba, dace_cpu, jax, ...) with an error column reading
 
     (Background on this error at: https://sqlalche.me/e/20/e3q8)
@@ -36,7 +36,7 @@ def test_cholesky_numpy_reference_produces_finite_output_at_the_fuzzed_preset() 
     """Rules out "cholesky's own math is broken" -- the manifest's ``initialize`` builds A @ A.T,
     always symmetric positive definite, so the Crout kernel below never takes sqrt of a negative
     number regardless of the fuzzed size. Runs at the suite's small-size cap (see conftest's
-    ``_cap_fuzz_sizes``): the 2026-09-15 failure was a DB-recording race, not a size-dependent one,
+    ``_cap_fuzz_sizes``): the failure was a DB-recording race, not a size-dependent one,
     so ``real_fuzz`` is not needed to reach it."""
     from hpcagent_bench.benchmarks.scientific_computing.dense_linear_algebra.cholesky.cholesky_numpy import kernel
 
@@ -73,7 +73,7 @@ def run_framework_worker(
 
 @pytest.mark.skipif(not osinfo.IS_LINUX, reason="fork start method is Linux-only")
 def test_cholesky_survives_four_ranks_recording_through_run_framework_sweep(tmp_path: pathlib.Path) -> None:
-    """The literal 2026-09-15 shape: four ranks each running ``run-framework -b cholesky -f numba``
+    """The literal failing shape: four ranks each running ``run-framework -b cholesky -f numba``
     (what canon_column.sh's inner loop invokes) against ONE shared, not-yet-existing results shard.
     Before the schema.py fix this failed nondeterministically with the exact reported symptom;
     forked_failure_reason(result) used to read as an unhelpful sqlalche.me URL for the same reason."""

@@ -88,7 +88,7 @@ def test_exception_is_surfaced_not_eaten() -> None:
 
 
 def test_failure_reason_keeps_the_exception_type_and_message_not_the_last_line() -> None:
-    # 2026-09-15: cholesky crashed the compiler-baseline sweep on every column with a
+    # cholesky crashed the compiler-baseline sweep on every column with a
     # SQLAlchemy OperationalError whose STR spans a header, a statement dump, and a doc-link URL.
     # Cutting the last line of the traceback text left "(Background on this error at:
     # https://sqlalche.me/e/20/e3q8)" as the one-line cause -- useless for triage.

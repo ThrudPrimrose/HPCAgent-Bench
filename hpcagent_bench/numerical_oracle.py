@@ -165,7 +165,7 @@ def _cap_compile_memory() -> None:
 _INVOKE_TIMEOUT_S = int(os.environ.get("HPCAGENT_BENCH_INVOKE_TIMEOUT_S", "120"))
 # Cap OpenMP AND BLAS threads: pluto compiles with -fopenmp, and under `pytest -n auto` each
 # xdist worker would otherwise oversubscribe cores. Also keeps the strict-xfail gate deterministic.
-# MKL/OPENBLAS/BLIS alongside OMP: the 2026-09-19 fft_1d incident -- a standalone (non-pytest)
+# MKL/OPENBLAS/BLIS alongside OMP: the fft_1d incident -- a standalone (non-pytest)
 # invocation of a fftw+openmp-linked .so left every one of these unset, so numpy's own bundled
 # OpenBLAS (imported for the comparison) and the compiled kernel's linked OpenBLAS/FFTW each sized
 # a thread pool off the visible core count while the process's actual sched_getaffinity was much
@@ -293,7 +293,7 @@ COMPILE = {
 BACKENDS = tuple(COMPILE)
 
 #: Kernels whose NATIVE legs compile at a lower optimization level, keyed to that level. Measured
-#: 2026-08-24 on a four-core box, all three languages per kernel: cloudsc 71.3s -> 19.2s and lulesh
+#: on a four-core box, all three languages per kernel: cloudsc 71.3s -> 19.2s and lulesh
 #: 41.8s -> 16.6s at -O0, both still ``ok``.
 #:
 #: A list rather than a corpus-wide flag, because -O2 is not pure cost here the way it is for numba:
@@ -348,7 +348,7 @@ DACE = "dace"
 
 #: Wall-clock cap (s) on one kernel's whole DaCe leg (parse + compile + run). Generous by design,
 #: like the parse gate's own budget: it is here to bound a WEDGED frontend, not to time anything.
-#: 1200 not 600: warpx_field_gather's leg is 742 s measured 2026-08-23 (38 s of it parse, the rest a
+#: 1200 not 600: warpx_field_gather's leg is 742 s measured (38 s of it parse, the rest a
 #: C++ build of one very large kernel), so 600 reported a FAIL:timeout on a kernel that agrees with
 #: numpy. It stays under the step's own ``--timeout=1500`` so the cap here is what fires first and
 #: the verdict names the kernel.
@@ -1107,7 +1107,7 @@ def _coerce_to_dtype(v, dt):
 #: cost is real. Every other kernel keeps numba's default pipeline (parfors, both vectorizers) under
 #: test, which on a 0.6-7.5s leg is nearly free, and a demoted kernel is still fully graded.
 #:
-#: cloudsc, measured 2026-08-24 on a four-core box: 1166.6s at the default, 381s+ at NUMBA_OPT=1
+#: cloudsc, measured on a four-core box: 1166.6s at the default, 381s+ at NUMBA_OPT=1
 #: (stopped, unfinished), 71.4s and still ``ok`` at NUMBA_OPT=0 -- the cliff is between 0 and 1. What
 #: LLVM spends that time on is the 58 explicit column loops a27abad20 introduced; the body itself
 #: passes at either level.

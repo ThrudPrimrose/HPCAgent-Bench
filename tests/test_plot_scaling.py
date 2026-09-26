@@ -208,7 +208,7 @@ def test_the_efficiency_panel_draws_the_ideal_at_one_and_the_speedup_panel_at_p(
     speedup = scaling.figure_speedup(scaling.curves(frame(rows)))
     assert speedup is not None
     ideal = [line for line in speedup.axes[0].lines if list(line.get_xdata()) == list(line.get_ydata())]
-    # The bound runs border to border (USER 2026-09-25), not only between the measured P.
+    # The bound runs border to border, not only between the measured P.
     assert ideal and tuple(ideal[0].get_xdata()) == pytest.approx(speedup.axes[0].get_xlim())
 
 

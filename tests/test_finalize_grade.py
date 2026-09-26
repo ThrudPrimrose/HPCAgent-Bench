@@ -187,7 +187,7 @@ def test_the_planning_finalize_job_does_not_hold_its_own_agent_job(tmp_path: pat
 
 
 def test_a_live_exempt_answer_is_not_planned(tmp_path: pathlib.Path) -> None:
-    """A submission on the exemption list keeps its live grade as the final one (2026-09-25 USER)."""
+    """A submission on the exemption list keeps its live grade as the final one."""
     db = judge_shard(tmp_path / "runs", JOB, [(run_id(1), "lulesh", 100, 2.0), (run_id(2), "hpccg", 100, 3.0)])
     exempt = tmp_path / "final-grade-exempt.tsv"
     exempt.write_text(

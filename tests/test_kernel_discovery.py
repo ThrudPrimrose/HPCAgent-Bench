@@ -77,7 +77,7 @@ def test_discovery_scans_are_nonempty() -> None:
     assert list(spec._scan_kernels()), "spec._scan_kernels() found no manifests -- the manifest scan regressed"
 
 
-# The seven HPC kernels pruned as collateral on 2026-07-11 and restored afterwards. conv_2d/conv_3d
+# The seven HPC kernels pruned as collateral and restored afterwards. conv_2d/conv_3d
 # came back once their w_box shape was declared 2D/3D in the manifest (it had been inferred 1D and
 # indexed multi-D, which the C emitter mis-lowered). Pinning all seven makes a future prune of
 # exactly these fail loudly instead of silently shrinking the suite.

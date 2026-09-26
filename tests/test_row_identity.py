@@ -187,7 +187,7 @@ def test_packet_is_canonical(raw: str, want: str) -> None:
         ("hip", "hip", ""),
         # An older submitter baked the clean suffix and/or a packet token into RECORD_LANGUAGE
         # instead of stamping them into their own fields (fixed for new arms -- every submit-*.sh
-        # now passes record_identity the bare language). USER RULE 2026-09-18: clean is a run flag
+        # now passes record_identity the bare language). clean is a run flag
         # the arm name alone carries, never the language; already-queued jobs still carry the old
         # value and their env files are never edited to fix it after the fact.
         ("c-clean", "c", ""),
@@ -546,8 +546,8 @@ def test_the_observations_reader_never_returns_an_adhoc_grade(
     tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Job 640078: a grade sent with no run id lands under the recorder's ``adhoc`` default, and its
-    ``runs`` row carries the JOB's identity, so the join read it as the arm's own answer. 2026-09-22
-    user decision: it answers nothing and its kernel is owed a rerun."""
+    ``runs`` row carries the JOB's identity, so the join read it as the arm's own answer. Decision:
+    it answers nothing and its kernel is owed a rerun."""
     db = tmp_path / "r.db"
     monkeypatch.setenv("HPCAGENT_BENCH_RECORD_ARM", "gpu-llr-focus40-qwen38-hip")
     task = Task(KERNEL, "restricted", "c")

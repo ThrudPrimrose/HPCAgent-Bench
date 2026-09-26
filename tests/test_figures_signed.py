@@ -339,7 +339,7 @@ def test_canon_row_matches_the_ratio_and_scopes_to_the_roster(llr40_canon: pd.Da
     assert row.ratios == {"k1": pytest.approx(10.0), "k2": pytest.approx(10.0), "k3": 1.0}
     assert row.numerator_ms["k1"] == pytest.approx(100.0) and row.numerator_ms["k2"] == pytest.approx(200.0)
     assert row.denominator_ms["k1"] == pytest.approx(10.0) and row.denominator_ms["k2"] == pytest.approx(20.0)
-    # k3 is FILLED at 1x, not dropped (2026-09-20 rule): numba timed it, dace_cpu_canonicalize
+    # k3 is FILLED at 1x, not dropped (rule): numba timed it, dace_cpu_canonicalize
     # never did, and that "no result" is flagged rather than made to look like a real measurement.
     assert row.ratios["k3"] == 1.0 and math.isnan(row.denominator_ms["k3"])
     assert row.delivered == {"k1": True, "k2": True, "k3": False}
@@ -389,7 +389,7 @@ def test_agent_row_carries_rule4_costs_and_a_repeat_interval(llr40_observations:
 
 def test_the_summary_slot_leaves_out_a_compilers_1x_placeholders(llr40_canon: pd.DataFrame) -> None:
     """dace_cpu_canonicalize never timed k3, which is drawn crossed at 1x; entering that 1x would
-    make the summary partly a statement about coverage (2026-09-21: solved kernels only). Its two
+    make the summary partly a statement about coverage (solved kernels only). Its two
     solved kernels are both 10x, so the printed geomean is 10x -- not 4.6x with the placeholder."""
     rows = signed.llr40_rows(llr40_canon, None, ROSTER40)
     fig = signed.llr40_figure(rows, ROSTER40)
@@ -420,7 +420,7 @@ def test_adding_compiler_columns_does_not_change_any_agent_rows_ratios(
     llr40_canon: pd.DataFrame, llr40_observations: pd.DataFrame
 ) -> None:
     """Wiring Pluto/ppcg_hip into the figure (``statistics/plot_llr40_compilers.py``'s own
-    ``--canon-columns`` default, 2026-09-20) only ADDS rows -- it must never change an agent arm's
+    ``--canon-columns`` default) only ADDS rows -- it must never change an agent arm's
     own per-kernel speedup (its S_i). ``pluto``/``ppcg_hip`` are absent from ``llr40_canon`` here
     (never a validated row, exactly the historical ppcg canon sweep, job 640520), so every roster
     kernel on those two rows fills at 1x -- and every agent row's ratios must be BIT-IDENTICAL to
@@ -455,7 +455,7 @@ def test_llr40_figure_renders_with_missing_marks_and_rule_checked_tables(
     assert stem.with_suffix(".pdf").is_file() and stem.with_suffix(".png").is_file()
     kernels = pd.read_csv(tmp_path / "llr40-kernels.csv")
     # dace_cpu never timed k3 (test_canon_row_matches_the_ratio_and_scopes_to_the_roster): the
-    # emitted table carries it at 1x rather than dropping the row (2026-09-20 rule).
+    # emitted table carries it at 1x rather than dropping the row (rule).
     dace_k3 = kernels[(kernels.framework == "dace_cpu") & (kernels.kernel == "k3")]
     assert len(dace_k3) == 1 and dace_k3["speedup"].iloc[0] == pytest.approx(1.0)
     summary = pd.read_csv(tmp_path / "llr40-summary.csv")
@@ -607,7 +607,7 @@ def test_figure_prints_at_text_width_and_names_its_summary_statistic(llr40_canon
     """Drawn at the size the page prints it: a figure* is text width, and a single speedup panel
     is a short strip, not a page. The axis label names the baseline and the 1x tick stays a ratio;
     every kernel has a visible tick, and the one summary statistic is named by an x tick under its
-    slots (user, 2026-09-22)."""
+    slots."""
     rows = signed.llr40_rows(llr40_canon, None, ROSTER40)
     fig = signed.llr40_figure(rows, ROSTER40)
     try:
@@ -732,7 +732,7 @@ def test_the_figure_draws_one_pending_mark_per_pending_kernel(pending_canon: pd.
 
 
 def test_a_kernel_numba_did_not_verify_is_timed_against_the_fallback() -> None:
-    """2026-09-21: where Numba fails, C autopar is the baseline; the row says how many kernels took it."""
+    """Where Numba fails, C autopar is the baseline; the row says how many kernels took it."""
     frame = canon_table([("numba", "k1", 100.0), ("cc_autopar", "k1", 80.0), ("cc_autopar", "k2", 40.0),
                          ("dace_cpu_canonicalize", "k1", 10.0), ("dace_cpu_canonicalize", "k2", 10.0)])  # fmt: skip
     row = signed.canon_kernel_row(frame, "dace_cpu_canonicalize", ("k1", "k2"), baseline_fallback="cc_autopar")

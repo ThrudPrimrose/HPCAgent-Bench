@@ -560,7 +560,7 @@ def test_without_frozen_observations_a_lost_setup_would_look_owed_in_full(
 
 # ------------------------------------------------------------------ a launch directory gone entirely
 #
-# 2026-09-20 bug: the 09-19 reducer deleted 147 ".agent-launch/<job>" directories, job dirs (and
+# bug: the 09-19 reducer deleted 147 ".agent-launch/<job>" directories, job dirs (and
 # their judge DBs, so remaining_kernels.py's own coverage rule) intact. newest_source() then returns
 # None for an arm none of whose surviving jobs kept a launch dir, and gather() dropped it with no
 # note at all -- "no owed kernels" while remaining_kernels.py still showed real owed work. Every skip
@@ -787,7 +787,7 @@ def placeholder_only_run(tmp_path: pathlib.Path, job: str, arm: str) -> pathlib.
 def test_a_placeholder_only_arm_is_planned_as_owed_infra_at_1x(
     owed: ModuleType, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """2026-09-20 decision, end to end through the planner: a forced-1x placeholder is owed, class
+    """End to end through the planner: a forced-1x placeholder is owed, class
     INFRA, and reruns at the model's normal (1x) budget even when the caller asked TOKEN_SCALE/
     TIME_SCALE=4 for the budget class -- INFRA never scales, so it cannot compound a cap it never hit."""
     arm = "cpf-llr-focus40-qwen38-c-placeholder"
@@ -804,7 +804,7 @@ def test_a_placeholder_only_arm_is_planned_as_owed_infra_at_1x(
     ), "the track budget, unscaled"
 
 
-# ------------------------------------------------------------------ 2026-09-23 submission scope
+# ------------------------------------------------------------------ submission scope
 
 
 def stub_command(directory: pathlib.Path, name: str, body: str) -> None:
@@ -832,7 +832,7 @@ def test_a_kernels_file_limits_the_plan_and_says_what_it_left_out(
 def test_a_kernel_a_promotion_answers_is_never_rerun(
     owed: ModuleType, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """2026-09-23 X7 promotions: the judge DBs still owe a kernel whose correct final-attempt score a
+    """Promotions: the judge DBs still owe a kernel whose correct final-attempt score a
     promotion regrade answers, so the plan must leave it out by the worklist, for that arm only."""
     arm = "cpf-llr-focus40-qwen38-c-subset"
     runs = model_mismatch_run(tmp_path, "700009", arm, "qwen38")
@@ -1291,7 +1291,7 @@ def test_the_serving_keys_are_the_model_layers_own_not_common_envs(owed: ModuleT
 def test_one_baseline_arm_per_model_track_device_and_language(
     model: str, track: str, device: str, language: str, arm: str
 ) -> None:
-    """User 2026-09-19/23: every treatment pairs against ONE baseline arm; none declared is ""."""
+    """Every treatment pairs against ONE baseline arm; none declared is ""."""
     from hpcagent_bench import campaigns
 
     assert campaigns.baseline_arm(model, track, device, language) == arm
@@ -1442,7 +1442,7 @@ def test_the_preflight_passes_a_wave_that_keeps_every_contract(
 def test_the_preflight_refuses_a_triton_setup_judged_from_source(
     owed: ModuleType, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """The 2026-09-22 void, caught on the staged files a job reads, not only while planning."""
+    """The void, caught on the staged files a job reads, not only while planning."""
     env = staged_wave(owed, tmp_path, "triton-device", JUDGE_INPUT_MODE="source")
     installed_edfs(owed, tmp_path, monkeypatch, env)
     problems = owed.preflight(env, "15:00:00", str(REPO))
@@ -1462,7 +1462,7 @@ def test_the_preflight_refuses_host_resident_gpu_c_a_short_walltime_and_a_missin
 
 
 def unrecorded(env: pathlib.Path) -> pathlib.Path:
-    """``env``'s wave as a planner before 2026-09-23 13:06 wrote it: its setups carry no contract."""
+    """``env``'s wave as a planner that predates the contract wrote it: its setups carry no contract."""
     setups = env.parent / f"setups-{env.name.removeprefix('.env.')}.json"
     document = json.loads(setups.read_text())
     for entry in document["setups"].values():
@@ -1483,7 +1483,7 @@ def launched_arm(tmp_path: pathlib.Path, arm: str, reference: dict[str, str]) ->
 def test_the_preflight_reads_an_unrecorded_contract_from_the_run_roots(
     owed: ModuleType, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Every wave queued on 2026-09-23 was planned before setups recorded their arm's contract, and
+    """Every wave queued was planned before setups recorded their arm's contract, and
     ``--preflight --queued`` failed all 17 of them on that alone, hiding the two real findings."""
     env = staged_wave(owed, tmp_path, "triton-device", JUDGE_INPUT_MODE="source")
     installed_edfs(owed, tmp_path, monkeypatch, env)

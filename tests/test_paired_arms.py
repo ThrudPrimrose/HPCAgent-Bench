@@ -698,7 +698,7 @@ def test_a_kernel_the_arm_never_delivered_scores_one_and_still_costs_its_tokens(
 def test_by_default_a_wrong_answer_is_left_out_of_the_speedup_and_still_costs_its_tokens(
     paired_arms: ModuleType, tmp_path: pathlib.Path
 ) -> None:
-    """A wrong answer is no speedup (2026-09-21): the default leg is over the solved kernels only,
+    """A wrong answer is no speedup: the default leg is over the solved kernels only,
     the failure shows as coverage, and its tokens are still spent."""
     rows: list[dict[str, object]] = []
     for kernel in KERNELS[:4]:
@@ -735,7 +735,7 @@ def test_the_arm_row_counts_what_the_arm_delivered_not_the_size_of_its_populatio
     assert row["coverage"] == pytest.approx(5 / 8)
 
 
-# 2026-09-26 USER: a kernel an arm never ran (only its task row: no graded answer, no judge call)
+# a kernel an arm never ran (only its task row: no graded answer, no judge call)
 # leaves that arm's population -- speedup, completion and tokens -- while one it ran and failed still
 # counts unsolved; a pair is over the kernels both arms ran.
 def test_a_kernel_the_arm_never_ran_leaves_its_completion_and_its_pairs_while_a_failure_stays_unsolved(

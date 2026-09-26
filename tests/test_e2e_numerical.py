@@ -184,7 +184,7 @@ def _result(stem: str) -> dict:
 #: chosen by name (scripts/select_e2e_kernels.py). 77 of 640 kernels reach 13664 of 13664 emit lines,
 #: because the corpus holds 151 tsvc_2_s* variants, 27 matmul and 22 gemm that are distinct
 #: BENCHMARKS but drive identical translation: not one tsvc kernel earns a place here.
-#: How many gated level-3 applications there are today (2026-09-01), as a FLOOR. The corpus holds
+#: How many gated level-3 applications there are today, as a FLOOR. The corpus holds
 #: 118 level-3 kernels; the ``kernelbench`` subtrack is ungated wholesale (see UNGATED_TAGS),
 #: which leaves these. Every one of them is in the per-push slice.
 LEVEL_3_FLOOR = 68

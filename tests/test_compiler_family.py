@@ -809,7 +809,7 @@ def test_an_offload_link_that_cannot_resolve_the_allocator_drops_it(monkeypatch,
 
 
 def test_no_fortran_compiler_declares_the_allocator(_mimalloc_links) -> None:
-    """Fortran is deliberately out of the allocator decision (user, 2026-08-13): allocatables are
+    """Fortran is deliberately out of the allocator decision: allocatables are
     the gfortran runtime's, not the agent's malloc calls, so -lmimalloc buys a Fortran submission
     nothing. Pinned as ABSENCE across every fortran block, because absence is how it is currently
     enforced -- one ref copied off a C block would silently put it back on the link line and put a

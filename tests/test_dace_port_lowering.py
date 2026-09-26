@@ -41,7 +41,7 @@ MPI_ENV = {
     "MPI4PY_RC_INITIALIZE": "0",
 }
 
-# Measured 2026-09-13 against dace extended 62ba39a, one port at a time on a dev box shared with
+# Measured against dace extended 62ba39a, one port at a time on a dev box shared with
 # other jobs: 103 of 104 ports lower, densenet121 slowest at 764 s, then swin_transformer_v2 304 s
 # and lulesh 286 s. 180 s, the old budget, would have failed four of them. 1500 gives densenet121
 # about 2x; densenet201 (DESELECTED), the one port that does not finish, is still parsing past it (its PARSE
@@ -55,7 +55,7 @@ LOWERING_REFUSED: dict[str, tuple[str, str]] = {}
 # Ports left out of the gate until their blocker is fixed: stem -> why. Restore each entry the day
 # the blocker goes, so the port is lowered again.
 DESELECTED: dict[str, str] = {
-    # Killed by a 3 GB memory cap after 992 s locally (2026-09-13), still in the frontend; as a
+    # Killed by a 3 GB memory cap after 992 s locally, still in the frontend; as a
     # timeout xfail it would spend the whole LOWER_TIMEOUT_S of a shard on every CI run.
     "densenet201": "DaCe Python frontend parse exceeds the time cap (known frontend slowness)",
 }

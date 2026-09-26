@@ -59,7 +59,7 @@ def test_verify_settings_keys_are_independent_verify_kwargs() -> None:
     # No reverify_seed: the harden seed is drawn inside independent_verify, salted per grade.
     settings = verify_settings()
     assert set(settings) == {"dual_oracle", "suspect_above"}
-    # S1 (2026-09-21): suspect_above stays UNSET here, not a config-frozen flat number -- a single
+    # S1: suspect_above stays UNSET here, not a config-frozen flat number -- a single
     # override baked in at this call site would apply the SAME bound to every re-verified row
     # regardless of host/device residency, silently undoing the host/device threshold split every
     # time this dict is splatted into independent_verify(). None lets independent_verify pick the

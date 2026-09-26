@@ -1,6 +1,6 @@
 # Copyright 2021 ETH Zurich and the HPCAgent-Bench authors.
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Deep-audit wave regression tests (2026-07-10).
+"""Deep-audit wave regression tests.
 
 Pins the correctness / robustness fixes from the whole-repo audit:
 

@@ -118,7 +118,7 @@ TYPE: plotstyle.TypeScale = plotstyle.PRINT_SCALE
 #: The treatment shapes in the key carry no model, so they are drawn in a neutral grey.
 KEY_GREY: str = "#6b6b6b"
 WIDTH_IN: float = plotstyle.ICLR_WRAP_WIDTH_IN
-#: A fifth under the 1.8in body of the row layout (user, 2026-09-26), with the vertical axis restored.
+#: A fifth under the 1.8in body of the row layout, with the vertical axis restored.
 BODY_HEIGHT_IN: float = 0.76 * plotstyle.PRINT_BODY_HEIGHT_IN
 
 #: Slot ticks: each weighting's vector (in, cached, out); the USD slot prices each model at its own

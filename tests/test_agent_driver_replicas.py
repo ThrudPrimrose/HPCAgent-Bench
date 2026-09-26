@@ -113,7 +113,7 @@ def start_fake_engine(health_status: int) -> tuple[http.server.ThreadingHTTPServ
 
 def test_a_replica_stuck_before_health_is_not_returned_as_ready(driver: ModuleType) -> None:
     """A replica that answers /v1/models but whose /health still 503s (mid warmup, the failure mode
-    behind the qwen38 2026-09-17 23:00 incident) must not be handed agents, even though /v1/models
+    behind a qwen38 incident) must not be handed agents, even though /v1/models
     alone would have looked ready under the old single-phase gate."""
     ready_server, ready_url = start_fake_engine(200)
     stuck_server, stuck_url = start_fake_engine(503)

@@ -1,6 +1,6 @@
 # Copyright 2021 ETH Zurich and the HPCAgent-Bench authors.
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""One context policy for every harness (USER 2026-09-22): no episode may die on the window.
+"""One context policy for every harness: no episode may die on the window.
 
 ``harnesses.context_policy`` gives the runners L = min(served window, 262144), the reply cap
 R = min(launcher cap, L // 8) and the compaction trigger T = L - R - round(0.12 * L);

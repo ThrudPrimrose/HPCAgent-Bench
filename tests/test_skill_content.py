@@ -996,7 +996,7 @@ def test_the_fortran_page_says_arrays_are_one_based_and_do_bounds_inclusive() ->
 
 #: Fortran 2023 spellings the graded `-std=f2018` line hard-errors on, and what F2018 offers
 #: instead. `reduce` is the one that actually shipped: the do-concurrent page taught it for
-#: accumulators until 2026-08-13, so every Fortran agent that followed the page got a build error
+#: accumulators, so every Fortran agent that followed the page got a build error
 #: rather than a slow result -- a solve-rate loss no speedup number shows.
 F2023_IN_FORTRAN = (
     (r"\breduce\s*\(", "do concurrent reduce(+:s) is F2023; use !$omp parallel do reduction(+:s)"),
@@ -1008,9 +1008,9 @@ F2023_IN_FORTRAN = (
 )
 
 #: Pages whose Fortran the graded build actually compiles. The do-concurrent page was merged into
-#: lang-fortran on 2026-08-21: it taught one construct, shipped only alongside its language page,
+#: lang-fortran: it taught one construct, shipped only alongside its language page,
 #: and the packet is charged once per agent TURN, so a separate page was per-turn rent for a header.
-#: openmp-fortran joined on 2026-08-21 when the generic openmp page split per language.
+#: openmp-fortran joined when the generic openmp page split per language.
 FORTRAN_PAGES = ("lang-fortran", "openmp-fortran")
 
 

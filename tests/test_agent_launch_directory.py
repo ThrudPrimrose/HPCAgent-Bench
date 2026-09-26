@@ -107,8 +107,7 @@ def test_concurrent_staging_of_the_same_job_never_leaves_a_readonly_partial_env(
     stage_agent_launch on the SAME AGENT_LAUNCH_DIR (keyed by job id, not role). The in-place
     rm-rf + populate + chmod version let one caller's chmod a-w land between another caller's cp
     and its later `>>` append, so the append hit a file it no longer had permission to write --
-    "Permission denied", the whole job dead before any agent work (643180/643181/643182,
-    2026-09-19). Runs several stagers of the SAME arm in parallel; every one must still exit 0 and
+    "Permission denied", the whole job dead before any agent work (jobs 643180-643182). Runs several stagers of the SAME arm in parallel; every one must still exit 0 and
     the launch directory must end up complete and read-only, not truncated mid-write."""
     scripts = tmp_path / "experiments"
     scripts.mkdir()

@@ -3,7 +3,7 @@
 """The device array module the harness imports has to be the real cupy, not a stand-in.
 
 The judge runs with the repo root FIRST on PYTHONPATH and agents can write there, so ``import
-cupy`` is a hijackable name. Measured 2026-09-06: an agent answered a missing cupy by writing its
+cupy`` is a hijackable name. Measured: an agent answered a missing cupy by writing its
 own, whose ``cuda.get_elapsed_time`` returned 0.0 and whose ``asnumpy`` was the identity. Every GPU
 kernel then timed as instant and the campaign recorded 500x-1000x speedups that never happened --
 and the suspect gate at 1000x let almost all of them through. A fabricated measurement is worse

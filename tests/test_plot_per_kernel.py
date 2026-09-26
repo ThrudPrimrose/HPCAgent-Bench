@@ -130,7 +130,7 @@ def test_the_token_summary_is_the_geomean_over_the_plotted_kernels_own_medians()
 
 
 def test_a_figure_with_one_summary_statistic_names_it_as_a_horizontal_x_tick() -> None:
-    """User, 2026-09-22: "Geomean" belongs on the x axis under its column, read like a kernel name,
+    """ "Geomean" belongs on the x axis under its column, read like a kernel name,
     not floating above the frame."""
     speed = speed_metric([pk.KernelCell("k1", (2.0,)), pk.KernelCell("k2", (4.0,))])
     fig = pk.figure_one(speed, ["k1", "k2"], pk.Style.CI, True, "")
@@ -180,7 +180,7 @@ def test_a_stacked_speedup_and_token_figure_names_its_one_summary_statistic_once
 
 def test_the_speedup_panel_carries_a_major_grid_and_a_minor_one_on_the_value_axis_only() -> None:
     """The measured axis is ruled at the pinned powers of two and, lighter, at the shared minors
-    between them (user, 2026-09-22); the kernel axis carries names and no line at all."""
+    between them; the kernel axis carries names and no line at all."""
     fig, ax = plt.subplots()
     try:
         pk.style_speedup_axis(ax, [pk.KernelCell("k1", (1.0, 2.0))])
@@ -547,7 +547,7 @@ def test_a_y_label_taller_than_its_panel_is_fitted_to_the_panel() -> None:
 
 
 def test_a_print_size_figure_gets_the_short_print_panel() -> None:
-    """User, 2026-09-22: a paper figure of forty kernels is a strip 30% shorter than the authored
+    """a paper figure of forty kernels is a strip 30% shorter than the authored
     panel, and the height is the library's to set, not each caller's."""
     speed = speed_metric([pk.KernelCell("k1", (2.0,))])
     fig = pk.figure_one(speed, ["k1"], pk.Style.CI, True, "", width_in=5.5)

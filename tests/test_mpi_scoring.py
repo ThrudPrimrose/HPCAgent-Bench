@@ -672,7 +672,7 @@ def patch_work_exponent(monkeypatch: pytest.MonkeyPatch, exponent: int | None) -
 
 def test_score_scaling_weak_rounds_a_non_perfect_kth_power_p_and_notes_it(monkeypatch) -> None:
     """jacobi_2d declares ``work_exponent=2`` on a single ``N`` axis. P=4 (m=2) grows exactly with
-    no note; P=2 and P=3 are not perfect squares, so they are ROUNDED (user decision 2026-09-22),
+    no note; P=2 and P=3 are not perfect squares, so they are ROUNDED,
     measured like any other P, and each carries a note plus its realized work ratio."""
     runs = weak_jacobi_2d_sweep(monkeypatch, (2, 3, 4))
     n = BenchSpec.load("jacobi_2d").parameters["S"]["N"]

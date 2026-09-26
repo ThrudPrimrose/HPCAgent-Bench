@@ -1076,7 +1076,7 @@ def figure_summary(
 
 #: One panel's height in :func:`figure_mode_grid`: 0.65 of the print panel, so two rows
 #: of narrow panels stay a strip under the text rather than a quarter page.
-# A tenth under 0.65 (user, 2026-09-26): the paper needs the space.
+# A tenth under 0.65: the paper needs the space.
 GRID_PANEL_HEIGHT_IN: float = 0.585 * PRINT_PANEL_HEIGHT_IN
 
 #: The one Y label of :func:`figure_mode_grid`, shared by both rows.

@@ -25,7 +25,7 @@ There is no waiver list for any of the three: each category is asserted EMPTY ou
 name that shows up is a regression, not a backlog -- and a kernel the translator still refuses
 fails HERE, with its own name, rather than being excused.
 
-Measured 2026-08-30, the refusals are not one cause: ``eigh_test`` declined at the matmul
+Measured, the refusals are not one cause: ``eigh_test`` declined at the matmul
 hoister (an operand allocated by ``np.zeros_like`` off an ``eigh`` output carried no extent) and
 ``conv_transpose3d_scaling_avg_pool_bias_add_scaling`` at the None-sentinel splice (the helper's
 unpack sits two loops below its call). Both lower now. What is left is ONE cause, not five: a
@@ -56,7 +56,7 @@ DEFAULT_SYMBOL_DTYPE_HERE = "int64"
 
 #: Kernels whose LOWERING alone outruns this phase's budget, excluded from the sweep by name.
 #:
-#: Measured 2026-08-30, parse+lower per kernel over the whole registry, one subprocess each:
+#: Measured, parse+lower per kernel over the whole registry, one subprocess each:
 #: googlenet_inception_v1 did not finish inside 150s, while the next-slowest kernel in the corpus
 #: is densenet201 at 27.7s and the median is under a second. One kernel, not a slow corpus -- it
 #: wedges ``ForwardSubstituteInvariantScalars.run``, which is O(assigns x tree). Left in, it took

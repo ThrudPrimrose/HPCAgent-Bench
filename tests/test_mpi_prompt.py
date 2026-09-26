@@ -305,7 +305,7 @@ def ml_prompt(kernel: str = "dist_softmax") -> str:
 
 def test_an_ml_kernel_states_its_default_layout_per_array() -> None:
     """On the ML track every rank generates its OWN input tiles as the contiguous block of the
-    manifest's split (USER 2026-09-23: the default is the 1-D block), so the prompt prints each
+    manifest's split (the default is the 1-D block), so the prompt prints each
     array's layout, the JSON to return, and which size symbols arrive local vs global. A kernel
     off the ML track keeps its free choice and is told nothing of the kind."""
     ml = ml_prompt()

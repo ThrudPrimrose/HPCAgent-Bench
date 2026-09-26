@@ -1,6 +1,6 @@
 # Copyright 2021 ETH Zurich and the HPCAgent-Bench authors.
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""W1 numpy-faithfulness regression tests (deep-audit 2026-07-10).
+"""W1 numpy-faithfulness regression tests (deep-audit).
 
 Each idiom round-trips through the ``run_op`` oracle against numpy, pinning a
 bug fixed in wave W1:

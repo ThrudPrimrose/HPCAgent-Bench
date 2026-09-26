@@ -8,7 +8,7 @@ runs, and answers correctly -- serially, under a parallel name; libstdc++ picks 
 without `-ltbb` fall back to the sequential overloads just as quietly. Neither shows up as a build
 error, so nothing catches them except a check that the wiring is declared -- which is what this
 file is. Both gaps were real: mpifort carried no do-concurrent flag and mpicxx no stdpar link ref
-until 2026-08-19, so an MPI kernel using either construct was timed single-threaded.
+before this was wired, so an MPI kernel using either construct was timed single-threaded.
 """
 
 import pytest

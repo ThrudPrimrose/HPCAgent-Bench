@@ -94,7 +94,7 @@ def test_a_finished_run_is_still_not_a_crash(driver: ModuleType, tmp_path: pathl
 
 
 #: A tool_use block opened and never closed, verbatim in shape from 641738/problem-0/attempt3
-#: (2026-09-19): the model finishes a text block, opens a Bash call with input={}, and the stream
+#:: the model finishes a text block, opens a Bash call with input={}, and the stream
 #: sends nothing else for THAT block before the client gives up.
 DIED_MID_TOOL_USE = (
     '{"type":"stream_event","event":{"type":"content_block_start","index":1,'

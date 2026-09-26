@@ -15,7 +15,7 @@ its arm would.
     owed_wave.py qwen38 [--experiments llr-focus40] [--setups <arm>,...] [--kernels-file F] [--out DIR]
 
 What is owed is remaining_kernels.py's rule over EVERY run root (budget and infra classes; since
-2026-09-20 a forced-1x placeholder -- an episode that ended on its own with no real grade -- owes
+a forced-1x placeholder -- an episode that ended on its own with no real grade -- owes
 one INFRA rerun too, never scaled: remaining_kernels.owed_classes turns its DONE into INFRA before
 this ever sees it). A setup is the arm's latest job's own launch env and
 problem entry for that kernel -- the condition the rest of the arm ran under -- renamed to the
@@ -93,7 +93,7 @@ PER_PROBLEM_KEYS = (
 JOB_OWNED_KEYS = ("RUN_ROOT", "PROBLEMS_FILE", "SETUPS_FILE", "KERNELS", "AGENT_NODES", "JUDGE_NODES")
 
 #: Keys an older arm env still carries that nothing reads any more (OPTARENA_OPTIMIZER renamed to
-#: HPCAGENT_BENCH_OPTIMIZER on 2026-09-17; CLAUDE_AUTOCOMPACT, whose --autocompact the 2.1.197 CLI
+#: HPCAGENT_BENCH_OPTIMIZER; CLAUDE_AUTOCOMPACT, whose --autocompact the 2.1.197 CLI
 #: never had). Dropped from a setup, so a stale spelling cannot split two setups into separate waves
 #: over a value no process sees.
 INERT_KEYS = ("OPTARENA_OPTIMIZER", "CLAUDE_AUTOCOMPACT")
@@ -901,9 +901,9 @@ def gather(
     campaign through the same make_problems.py pass :func:`rerender` already runs on every setup of
     it; llrblind, which :func:`rerender` never touches, gets that pass run right here since nothing
     downstream would otherwise). Every path that skips an identity or a kernel notes why -- a plan
-    that drops owed work without saying so is the 2026-09-20 bug this guards against.
+    that drops owed work without saying so is the bug this guards against.
 
-    BASELINE REUSE (user 2026-09-19, 2026-09-23): a taken treatment pairs against ONE baseline arm
+    BASELINE REUSE: a taken treatment pairs against ONE baseline arm
     per kernel (:func:`baseline_of`), so with ``selection.baselines`` that baseline's OWN owed
     kernels among the ones the treatments are served are planned too, whatever the experiment
     filter; a skill-less arm duplicating that baseline is never planned (:func:`per_treatment_control`)."""
@@ -1096,7 +1096,7 @@ RENDERED_TRACKS = {
 
 #: RENDERED_TRACKS plus llrblind: when NO job of an identity has a surviving launch directory at
 #: all, there is no old row left to reuse even for a campaign that normally reuses one (llrblind),
-#: so the roster + a fresh render is the only source of task text there is. Checked 2026-09-20
+#: so the roster + a fresh render is the only source of task text there is. Checked
 #: against a surviving llrblind-cmp-oss120b-c-skills job (641695): a fresh render of the same
 #: kernel/language/packet selects the identical skill pages the saved task did, in the same order --
 #: only a couple of triggers' own wording moved, since those pages were edited after that job
@@ -1268,7 +1268,7 @@ CE_KEYS = ("INFERENCE_CE_ENV", "AMD_CE_ENV", "JUDGE_CE_ENV")
 
 def language_contract(env: dict[str, str]) -> list[str]:
     """What a setup's language fixes whatever its arm's env says: a python-called submission judges
-    ``py-binding`` (the 2026-09-22 void), C on a GPU is device-resident OpenMP offload (2026-09-21)."""
+    ``py-binding`` (the void), C on a GPU is device-resident OpenMP offload."""
     problems = []
     if env.get("LANGUAGE") in PY_BINDING_LANGUAGES and env.get("JUDGE_INPUT_MODE") != "py-binding":
         problems.append(f"JUDGE_INPUT_MODE={env.get('JUDGE_INPUT_MODE', '<unset>')} for LANGUAGE={env['LANGUAGE']}")
@@ -1322,7 +1322,7 @@ def preflight(env_path: pathlib.Path, walltime: str, opt: str, runs: str = "") -
     than ``opt``'s, an EDF not installed, a budget under the policy, or a walltime that cannot hold
     the longest agent plus staging or exceeds the partition cap.
 
-    A setup planned before its wave recorded the contract (2026-09-23) is held to the one
+    A setup planned before its wave recorded the contract is held to the one
     :func:`arm_contract` reads from ``runs`` now; without ``runs`` it cannot be checked and fails."""
     job_env = parse_env(env_path.read_text(encoding="utf-8"))
     values = dict(job_env)

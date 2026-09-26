@@ -178,7 +178,7 @@ RECORD_TABLES = ("calls", "submissions", "attempts")
 #: Pseudo-arm the harness writes for a grade with no campaign run id; never a real condition.
 ADHOC_ARM = frozen_observations.ADHOC_RUN_ID
 
-#: Epoch ms for 2026-08-26 00:00 UTC, the day the C reference sources were regenerated
+#: Epoch ms (2026-08-26 00:00 UTC) of the C reference sources' regeneration
 #: (HPCAgent-Bench cd9b3345, 405 files). Before it, 208 of 298 `_reference.c` files were verbatim
 #: TSVC -- wrong name, wrong signature, reading TSVC globals -- so an agent that followed one built
 #: a shared object that could not load and the judge recorded `incorrect`. Every C row stamped
@@ -337,7 +337,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=C_REFERENCE_FIX_MS,
         metavar="MS",
         help="drop C rows stamped before this epoch-ms boundary; 0 disables the filter "
-        f"(default {C_REFERENCE_FIX_MS}, 2026-08-26 UTC)",
+        f"(default {C_REFERENCE_FIX_MS} UTC)",
     )
     ap.add_argument("--threads", type=int, default=32, help="parallel database readers (default 32)")
     ap.add_argument(
@@ -1385,7 +1385,7 @@ def final_outcome(task: dict[str, Any], tally: CellTally | None) -> tuple[str, s
     at all (``status`` error) is an error too, and so is one whose cell rows do not add up, and so
     is a task no input of which produced a measurement (:data:`NO_MEASUREMENT_REASON`: the per-run
     time limit, a crash, a baseline that itself times out): the protocol gave it no grade, so the
-    answer keeps its last valid one (user, 2026-09-26). Credit is
+    answer keeps its last valid one. Credit is
     ``s_i`` alone: ``s_bar`` holds the geomean even for an unsolved task and ``gated`` means nothing
     under this rule, so neither is read here."""
     if tally is None or tally.cells != int(task.get("n_cells") or 0):

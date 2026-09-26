@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """agent_driver.py: the watchdog for a stream that dies mid ``tool_use`` and never says so.
 
-Job 641748 (2026-09-19, qwen38 scicomp-perf-playbook, 4 nodes): 23 of 40 agents sat with an open
+Job 641748: 23 of 40 agents sat with an open
 Bash ``tool_use`` content block and zero new bytes for 4+ hours -- CLAUDE_BYTE_STREAM_IDLE_TIMEOUT_MS
 (the CLI's own idle timer) never fired, and the driver's only other backstop is the PROBLEM's wall
 clock (AGENT_TIMEOUT_SECONDS=72000, 20h), shared across every crash-relaunch attempt. Nothing killed

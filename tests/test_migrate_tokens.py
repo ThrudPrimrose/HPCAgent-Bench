@@ -1,7 +1,7 @@
 # Copyright 2021 ETH Zurich and the HPCAgent-Bench authors.
 # SPDX-License-Identifier: GPL-3.0-or-later
 """``experiments/migrate_tokens.py``: re-folding finished ``tokens.json`` records under the current
-token fold (``agent_driver.TOKEN_FOLD``, 3 as of 2026-09-22).
+token fold (``agent_driver.TOKEN_FOLD``, 3).
 
 Fold 1 added the client's streamed thinking estimate to a server ``output_tokens`` that already
 counted reasoning, so every claude record's ``effective`` was high by its reasoning (13/F8). Fold 3

@@ -144,17 +144,17 @@ owed_run_roots:
   scicomp-focus40: [owed-scicomp-focus40]
   git-scicomp: [owed-git-scicomp]
 
-# Arms the user took out of the experiments, as ONE regex searched against an arm name (2026-09-18:
-# union-alpha, scicomp C++ and GPU c-openmp offload; the LLR CPU Fortran arms, back in 2026-09-25; 2026-09-19: only
-# cpfsrc-v2 counts, so every cpfsrc v1 arm leaves; 2026-09-21: the host-resident GPU LLR triton and
-# c-openmp arms timed their own copies, superseded by triton-device and c-openmp-device).
+# Arms the user took out of the experiments, as ONE regex searched against an arm name:
+# union-alpha, scicomp C++ and GPU c-openmp offload; every cpfsrc v1 arm (only cpfsrc-v2 counts);
+# the host-resident GPU LLR triton and c-openmp arms, which timed their own copies (superseded by
+# triton-device and c-openmp-device).
 dropped_arms: "unionalpha|^scicomp-dc-cpp-|^scicomp-dc-gpu-.*-c-openmp-(?!device-)|-cpfsrc(?!-v2)|^gpu-llr-focus40-[^-]+-(triton|c-openmp)(?!-device)"
 
 # Arm names that are ONE arm under two spellings, as {regex: replacement} applied to an arm name with
 # re.sub (\1 = a captured group; an unmatched optional group is empty). The left spelling's rows, jobs
 # and owed kernels count as the right one's everywhere: remaining_kernels.base_arm (owed planning,
 # the wave board) and experiments.renamed_arm (extraction/analysis) both read it, so coverage is the
-# union and the latest run per kernel wins between them. 2026-09-24 user: "dc should be an alias for
+# union and the latest run per kernel wins between them. "dc should be an alias for
 # perf playbook": the scicomp-focus40 CPU C control ran as scicomp-perf-playbook-<model>-plain
 # (09-13..) and again as scicomp-dc-<model>-plain (09-15..), same model, language, device, empty
 # packet, prompt and budget. Only that plain CPU C arm has both spellings; no other dc arm aliases.
@@ -164,7 +164,7 @@ arm_aliases:
 # An experiment's rows are not always enough to draw it. The BASELINE a ratio is divided by and the
 # compiler comparators drawn beside the agents come from the CANON SWEEP, which is not a campaign
 # and has no job-name prefix -- it is its own database (run, column, kernel, preset, datatype,
-# median_ms). A comparator is never the denominator (user, 2026-09-20). The sweep covers a whole
+# median_ms). A comparator is never the denominator. The sweep covers a whole
 # track, so its rows are filtered to the experiment's roster before anything is reduced.
 experiment_baselines:
   llr-focus40: {denominator: numba, comparators: [pluto, ppcg, cc_autopar, dace_cpu_canonicalize]}
@@ -173,10 +173,10 @@ experiment_baselines:
   git-scicomp: {denominator: cc_autopar, comparators: []}
 
 # The ONE baseline ARM every treatment on a kernel pairs against, per (track, device, language) of
-# that kernel (user 2026-09-19 + 2026-09-23: "reuse the baseline"; a kernel shared by harness20 and
+# that kernel ("reuse the baseline"; a kernel shared by harness20 and
 # scicomp needs the scicomp baseline once). `arm` is a template on the model tag; a model key names
 # that model's own arm where it differs. An arm_aliases spelling is never named here: its canonical arm is.
-# `language` is the arm's LANGUAGE: C on a GPU is OpenMP offload, device-resident since 2026-09-21.
+# `language` is the arm's LANGUAGE: C on a GPU is OpenMP offload, device-resident.
 # The owed planner reruns a baseline's OWN owed kernels wherever a planned treatment needs them, and
 # never a separate control per treatment (experiments/owed_wave.py baseline_owed).
 baseline_arms:
@@ -216,7 +216,7 @@ models:
 optimizers:
   dace: DaCe
   cpf: Canonical Parallel Form
-  # Polyhedral compiler baselines the llr-focus40 speedup figure compares against (2026-09-20),
+  # Polyhedral compiler baselines the llr-focus40 speedup figure compares against,
   # APPENDED so neither repaints dace/cpf's shapes. Their colour stays framework_color's own
   # `frameworks:` slot (pluto, ppcg_hip below); this only gives each its own marker shape.
   pluto: Pluto
@@ -277,10 +277,10 @@ packets:
       HPCAGENT_BENCH_SERVICE_CANONICAL_PARALLEL_FORM_DIR: "${CPF_VIEW}"
   lang-skills:
     # `*` = every shipped page EXCEPT a packet tool's manual (hpcagent_bench.packets.tool_pages).
-    # Through the 2026-09-15 clean wave it staged canonical-parallel-form.md too, a page about a
-    # tool only the cpf packet's arms are served; from 2026-09-16 this packet stages the language,
+    # Through the clean wave it staged canonical-parallel-form.md too, a page about a
+    # tool only the cpf packet's arms are served; this packet stages the language,
     # OpenMP and method pages only. One arm, one packet.
-    # From 2026-09-17 `*` is narrowed per arm by each page's own `applies:` frontmatter (language,
+    # `*` is narrowed per arm by each page's own `applies:` frontmatter (language,
     # image, multinode), and the packet sets NO hints file: a skill reaches the agent as its trigger
     # line and its file on disk only, never as text in the main prompt. The hints-and-triggers.md
     # routing table it used to put there summarized two pages' contents ahead of the index.
@@ -397,7 +397,7 @@ packets:
 # Where the kernel was TIMED. `cpu` is the default a launcher stamps when it says nothing.
   caveman:
     # Terse-output style (adapted from JuliusBrussee/caveman, MIT, containers/agent/caveman-LICENSE.txt)
-    # as a SKILL PAGE with its own trigger, like every other treatment: from 2026-09-17 no skill text
+    # as a SKILL PAGE with its own trigger, like every other treatment: no skill text
     # rides in the main prompt. Up to then it sat verbatim in the hints slot on every turn (the
     # llr-caveman20 wave). The page is `applies: {explicit: true}`, so `*` never stages it.
     name: Terse

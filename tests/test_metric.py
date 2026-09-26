@@ -226,7 +226,7 @@ def test_the_loop_track_never_degrades_to_the_numpy_baseline(monkeypatch) -> Non
     """The pre-probe that reroutes an unemittable kernel to numpy must not reach this track: its
     numpy reference is an interpreted scalar loop (~118 s per case at XL), so the denominator stays
     compiled or JIT-compiled. Asserted as "not numpy" rather than against one kind, because WHICH
-    kind is the track default is a policy that has already moved once (c -> numba, 2026-09-03) and
+    kind is the track default is a policy that has already moved once (c -> numba) and
     the invariant under test is the absence of the degradation, not the identity of the winner.
     tests/test_track_oracle.py pins both halves -- the absence here, and the degradation that still
     applies to every other track."""
@@ -753,12 +753,12 @@ def test_suspect_threshold_follows_config_at_call_time(monkeypatch) -> None:
     assert scoring.suspect_threshold(42.0) == 42.0, "an explicit override must still win over config"
 
 
-# ------------------------------------------------- S1: host/device plausibility bounds (2026-09-21)
+# ------------------------------------------------- S1: host/device plausibility bounds
 
 
 def test_suspect_threshold_reads_the_host_or_device_key_by_the_device_flag() -> None:
     """Two separate knobs, not one flat number read twice: 2000x on the host, 16000x on the device
-    (2026-09-22 USER: both doubled, and the paper's appendix protocol states these values)."""
+    (both doubled, and the paper's appendix protocol states these values)."""
     assert scoring.suspect_threshold() == 2000.0  # device=False is the default
     assert scoring.suspect_threshold(device=False) == 2000.0
     assert scoring.suspect_threshold(device=True) == 16000.0

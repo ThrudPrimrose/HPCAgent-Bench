@@ -50,7 +50,7 @@ def test_a_fused_frame_keeps_the_live_row_and_drops_the_frozen_one_for_the_same_
 
 def test_a_frozen_row_keeps_its_flag_through_the_fuse(selection: campaigns.Selection) -> None:
     """Without the flag a reader cannot tell a measurement that still has its judge DB from one
-    whose only surviving record is the 2026-09-19 extract."""
+    whose only surviving record is the extract."""
     frame, provenance = dataset.fuse(
         selection, pd.DataFrame([row("100", "dfa")]), pd.DataFrame([row("200", "kmp", frozen="1")])
     )

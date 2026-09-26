@@ -212,7 +212,7 @@ def test_skipping_lines_that_cannot_carry_usage_changes_no_total(
     # output tokens already count it (module docstring, 3).
     assert cost["thinking_estimate"] == 40
     assert cost["effective"] == fresh + token_cost.CACHE_DISCOUNT * cached + 70
-    # The three readings of ONE fold (USER 2026-09-16): free (cache reads at 0), provider (cache reads
+    # The three readings of ONE fold: free (cache reads at 0), provider (cache reads
     # at a tenth, what a hosted service meters) and billed (every prompt in full). 1500 + 0.1 * 1000 + 70.
     assert cost["effective_provider"] == fresh + 0.1 * cached + 70 == 1670
     assert cost["effective"] < cost["effective_provider"] < cost["naive_total"]
@@ -631,7 +631,7 @@ def test_the_container_tool_and_the_analysis_agree_on_the_overlap_rule(
 def test_a_compaction_charges_the_rebuilt_prompt_as_fresh_and_is_counted(
     token_cost: ModuleType, tmp_path: pathlib.Path
 ) -> None:
-    """USER 2026-09-16: the claude arms compact proactively (agent_driver.claude_context_env). After a
+    """the claude arms compact proactively (agent_driver.claude_context_env). After a
     compaction the prompt is SHORTER than the previous one and shares no prefix with it -- a full
     cache miss -- so the whole rebuilt prompt is fresh. The old fold charged it at zero
     (max(0, 400 - 1500))."""
@@ -654,7 +654,7 @@ def test_a_compaction_charges_the_rebuilt_prompt_as_fresh_and_is_counted(
 
 
 # -------------------------------------------------------------------------------------------------
-# USER 2026-09-22: a proactive compaction's own REQUEST -- the call that reads the transcript and
+# a proactive compaction's own REQUEST -- the call that reads the transcript and
 # asks for a summary -- never appears as an "assistant" stream event the way a normal turn's does.
 # Its tokens land only in the closing `result` event's `modelUsage` (claude-code's own
 # session-cumulative tally, camelCase, distinct from the `usage` block `result_line` above writes),

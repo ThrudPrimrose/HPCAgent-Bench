@@ -106,8 +106,8 @@ def test_every_model_the_palette_colours_also_has_a_name() -> None:
     ],
 )
 def test_split_record_language_strips_clean_and_the_baked_in_packet(raw: str, language: str, packet: str) -> None:
-    """A Kimi `-clean` env file an older submitter wrote (see the LANGUAGE folding rule, USER RULE
-    2026-09-18) must still resolve to its bare, registered language -- clean is a run flag the arm
+    """A Kimi `-clean` env file an older submitter wrote (see the LANGUAGE folding
+    rule) must still resolve to its bare, registered language -- clean is a run flag the arm
     name alone carries, never the language."""
     assert experiment_tags.split_record_language(raw) == (language, packet)
     assert experiment_tags.canonical("languages", raw) == language

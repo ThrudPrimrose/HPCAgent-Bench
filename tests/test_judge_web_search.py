@@ -145,7 +145,7 @@ def test_web_search_tool_answers_via_fake_serpapi_crawl_and_llm() -> None:
     assert main() == 0
 
 
-#: Every ``experiments/.env.*`` ships this empty as of 2026-09-17 (98/98 arms), so this is the
+#: Every ``experiments/.env.*`` ships this empty (98/98 arms), so this is the
 #: config every campaign arm actually runs search under today.
 UNPROVISIONED_ENV = {"SERPAPI_API_KEY": "", "WEBSEARCH_LLM_BASE_URL": "", "WEBSEARCH_LLM_MODEL": ""}
 

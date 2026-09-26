@@ -35,7 +35,7 @@ COMMON_VARS = (
 )
 
 #: The launcher's default for each of them. The idle watchdog is the wall that fires first in Claude
-#: Code 2.1.197; its default is DERIVED (stream_idle_timeout.py, 2026-09-19) from the arm's own
+#: Code 2.1.197; its default is DERIVED (stream_idle_timeout.py) from the arm's own
 #: CONTEXT_LENGTH and AGENTS_PER_NODE rather than copied, but every arm that named neither still
 #: lands on 1800000 ms, the CLI's ceiling for it -- see test_stream_idle_timeout.py.
 LAUNCHER_DEFAULTS = {

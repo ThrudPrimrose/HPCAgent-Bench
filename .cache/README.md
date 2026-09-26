@@ -42,9 +42,9 @@ every `HPCAGENT_BENCH_JIT_PUBLISH_INTERVAL_SECONDS` (default 1800). `HPCAGENT_BE
 disables the layer and writes the shared tree directly, as before. `AITER_JIT_DIR` is not part of
 this layer; it is seeded once from the image's own prebuild and still writes the shared tree.
 
-## Node-local agent caches, hard-linked task material, dace_numeric (2026-09-19 inode fix)
+## Node-local agent caches, hard-linked task material, dace_numeric (inode fix)
 
-The 2026-09-19 inode-quota incident (1.67M vs 1M on `$SCRATCH`) had three sources, all fixed the
+The inode-quota incident (1.67M vs 1M on `$SCRATCH`) had three sources, all fixed the
 same way -- move the many-small-files tree off the swept, shared root:
 
 - **Agent JIT/pip caches.** `TRITON_CACHE_DIR`/`XDG_CACHE_HOME` were never set for an agent, so

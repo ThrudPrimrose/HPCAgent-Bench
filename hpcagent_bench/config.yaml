@@ -70,7 +70,7 @@ fuzz:
   # magnitude and the config knobs rotate beside them, so shape was the one axis all five cases
   # shared -- five runs of ONE shape. Rotating it costs 1.84 XL-equivalents instead of 5 and turns
   # shape into a 4-point axis. A preset a kernel does not DECLARE falls back per case to the TIMED
-  # preset; empty list = every case at the timed preset (the pre-2026-08-14 behaviour).
+  # preset; empty list = every case at the timed preset (the previous behaviour).
   # Order follows what each variant stresses: neutral-uniform isolates large-shape indexing at XL,
   # the scale-3 variant needs size for accumulation error, the pure-distribution ones do not, and
   # the scale-0.1 underflow probe is size-independent.
@@ -193,7 +193,7 @@ measurement:
                            # off (and the whole block is inert on a host grade: no device, no
                            # residual). A trip does NOT fail the submission: it credits 1 and sets
                            # the existing `suspect` flag, with the readings kept on the row.
-                           # MEASURED 2026-09-20 on one mi300 node (job 644265, ROCm judge image,
+                           # MEASURED on one mi300 node (job 644265, ROCm judge image,
                            # 300 reps x 5 sizes from 4K to 64M elements). Every value is TWICE the
                            # worst an honest kernel produced, because the sampled tail is not the
                            # tail: the gate must not fire on work that was done.
@@ -416,7 +416,7 @@ record:
                                   # bandwidth ratio bound for that pair is ~5900x (5.3 TB/s over the
                                   # 0.9 GB/s the slowest such baseline achieves). The three rows that
                                   # are physically impossible sit at 12153-13114x. Applied to
-                                  # baseline_ns/native_ns as well as the credit. 2026-09-22 USER:
+                                  # baseline_ns/native_ns as well as the credit.
                                   # 1000x/8000x doubled to 2000x/16000x; the bandwidth floor below
                                   # is what catches a row that never touched its data.
   physical_bandwidth_gbps_device: 10600.0  # bandwidth FLOOR (a native_ns under declared bytes / this
@@ -537,7 +537,7 @@ limits:
                            # 10 of 242 kernels at 10 GB and all 242 by 16 GB -- which is no
                            # coincidence, since sizing.XL_BYTE_CEILING then capped that track's XL
                            # footprint at 8 GB and MEMORY_COPIES is 2 (the ceiling is 4 GB since
-                           # 2026-09-01, so the same bound is now 8 GB). 20 leaves headroom above
+                           # so the same bound is now 8 GB). 20 leaves headroom above
                            # that bound for workspace and for a fuzz draw near the top of its
                            # interval, without approaching what four concurrent judge slots can
                            # hold on one node.

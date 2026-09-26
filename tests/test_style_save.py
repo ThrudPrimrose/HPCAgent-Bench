@@ -42,7 +42,7 @@ def test_a_figure_saved_at_two_times_is_byte_identical(tmp_path: pathlib.Path, m
 ])  # fmt: skip
 def test_the_value_axis_helper_rules_minors_on_a_log_axis_only(scale: str, minor_grid: bool) -> None:
     """One helper, one grid. Every figure goes through ``value_axis``, so the minor ruling it draws
-    on a log axis (user, 2026-09-22) is what every log value axis gets; a linear axis does not know
+    on a log axis is what every log value axis gets; a linear axis does not know
     whether it holds log2 units or a count, so its caller names that to ``minor_ticks``."""
     fig, ax = plt.subplots()
     try:

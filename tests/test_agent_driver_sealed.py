@@ -304,7 +304,7 @@ def test_the_worker_gets_node_local_jit_and_package_caches_not_the_persistent_ho
 ) -> None:
     """Neither TRITON_CACHE_DIR nor XDG_CACHE_HOME was ever set for an agent, so every episode's
     compiler defaulted to $HOME/.triton and $HOME/.cache under the PERSISTENT workdir -- the
-    2026-09-19 inode-quota incident's largest source (119k + 27k files never swept). Both must be
+    inode-quota incident's largest source (119k + 27k files never swept). Both must be
     under TMPDIR, never under the workdir/home the run tree keeps, and the driver must remove that
     tree once the worker exits rather than leaving it for the next episode to inherit."""
     tmp_root = tmp_path / "node-local-tmp"

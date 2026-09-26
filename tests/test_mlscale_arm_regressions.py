@@ -266,7 +266,7 @@ def test_hipcub_is_refused_on_an_arm_that_does_not_widen_the_contract(
 def test_a_gemmhint_arm_honours_hipcub_and_still_refuses_blas(
     tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """USER 2026-09-25: the -gemmhint arms may name the header-only hipcub; rocBLAS stays refused.
+    """the -gemmhint arms may name the header-only hipcub; rocBLAS stays refused.
     ``library_offered`` is widened to hipcub the way arm_judge widens it to mpi/rccl: this host may
     have no hipcc to probe the header with, and the probe is not what is under test."""
     monkeypatch.setenv("HPCAGENT_BENCH_GRADING_DISTRIBUTED_LIBRARIES", GEMMHINT_LIBRARIES)
@@ -538,7 +538,7 @@ def old_shard_row(body: Mapping[str, object], graded: Mapping[str, object]) -> N
 def test_a_crash_inside_the_submission_at_any_rank_count_is_an_incorrect_grade(
     tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """USER 2026-09-24: a segfault / illegal access inside the submission's run at P=1, with P=4
+    """a segfault / illegal access inside the submission's run at P=1, with P=4
     correct, is a wrong submission: /submit answers ``correct: false`` naming the crash at P=1 and
     records an attempt."""
     with arm_judge(tmp_path, monkeypatch) as (url, launches, _baselines):

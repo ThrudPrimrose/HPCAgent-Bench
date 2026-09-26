@@ -1,6 +1,6 @@
 # Copyright 2021 ETH Zurich and the HPCAgent-Bench authors.
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""The canon-sweep 1x rule (:func:`hpcagent_bench.stats.canon.roster_speedups`, 2026-09-20): a
+"""The canon-sweep 1x rule (:func:`hpcagent_bench.stats.canon.roster_speedups`): a
 roster kernel a compiler column produced no validated result for -- declined, crashed, or never
 attempted -- contributes speedup 1.0 rather than being dropped, the SAME placeholder
 :data:`~hpcagent_bench.stats.population.NOT_DELIVERED` already gives a failed agent submission."""

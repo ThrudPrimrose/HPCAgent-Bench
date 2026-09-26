@@ -370,7 +370,7 @@ def test_the_plan_names_the_inputs_a_layout_holds_whole() -> None:
 
 
 def test_a_replicated_input_arrives_whole_on_every_rank() -> None:
-    """USER 2026-09-23: 'replicated' on an allowlisted array must be honoured -- the tile check used
+    """'replicated' on an allowlisted array must be honoured -- the tile check used
     to refuse the whole copy the declaration asks for and abort the grade."""
     torch = pytest.importorskip("torch")
     plan = plan_for(2, REPLICATED_A)

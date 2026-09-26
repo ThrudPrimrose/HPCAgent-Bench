@@ -68,7 +68,7 @@ output_args:
 - out
 mpi:
   decomposition:
-    # Weak scaling grows the TOKENS only (USER 2026-09-23): the experts stay split over the ranks
+    # Weak scaling grows the TOKENS only: the experts stay split over the ranks
     # (expert_weight / expert_bias on num_experts) at their preset count, so the per-rank gating
     # work and the replicated gate_weight do not grow with P.
     axis:

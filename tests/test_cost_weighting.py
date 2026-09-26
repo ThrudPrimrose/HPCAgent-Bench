@@ -52,7 +52,7 @@ def test_the_cost_figure_is_as_wide_as_its_wrap_and_prints_on_the_shared_scale()
 
 
 def test_the_key_names_each_model_by_its_hue_and_each_pair_by_its_shape() -> None:
-    """USER 2026-09-26: a reader has to tell the models apart from the key itself (short names:
+    """a reader has to tell the models apart from the key itself (short names:
     OSS-120B, Kimi-K2.7), then find each pair by its shape."""
     extra = ("cpf-llr-focus40-qwen38-c-cpfsrc-v2", "cpf-llr-focus40-qwen38-c")
     table = pd.concat([points(), points().assign(arm_a=extra[0], arm_b=extra[1])], ignore_index=True)
@@ -80,7 +80,7 @@ def test_token_slots_are_ticked_by_their_weights_and_the_dollar_slot_by_usd() ->
 
 
 def test_the_axes_ink_fills_the_placed_width() -> None:
-    """USER 2026-09-25: no empty band left of the Y label; the ink runs to the pad on both sides."""
+    """no empty band left of the Y label; the ink runs to the pad on both sides."""
     fig = cost_weighting.figure_cost_points(points(), {})
     assert fig is not None
     try:
@@ -94,7 +94,7 @@ def test_the_axes_ink_fills_the_placed_width() -> None:
 
 
 def test_the_usd_slot_is_drawn_only_when_every_model_has_a_price_card(tmp_path: Path) -> None:
-    """USER 2026-09-25: four slots when every model in the figure has a ``usd-<model>`` card,
+    """four slots when every model in the figure has a ``usd-<model>`` card,
     three otherwise -- a dollar slot for some models only would compare a subset of the marks."""
     priced = [cost_weighting.Pair(*PAIRS[0]), cost_weighting.Pair(*PAIRS[1])]
     assert cost_weighting.figure_cards(priced) == (*cost_weighting.TOKEN_CARDS, cost_weighting.Card.USD)

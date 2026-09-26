@@ -72,7 +72,7 @@ def test_track_default_map_values() -> None:
     assert grading.default_baseline_for_track("loop_level_reasoning") == "numba"
     assert grading.default_baseline_for_track("machine_learning") == "numpy"
     assert grading.default_baseline_for_track("scientific_computing") == "c-autopar"
-    # An unknown / unset track falls back to the head of the neutral chain (2026-09-20: autopar,
+    # An unknown / unset track falls back to the head of the neutral chain (autopar,
     # then sequential C -- see DEFAULT_BASELINE_SET and tests/test_best_of_baseline.py).
     assert grading.default_baseline_for_track("something-else") == grading.DEFAULT_BASELINE == "c-autopar"
     assert grading.default_baseline_for_track(None) == "c-autopar"
@@ -180,7 +180,7 @@ def test_fortran_autopar_candidates_are_multicore_autopar() -> None:
     gfortran cannot use the plain `_AUTOPAR_FLAG` check the C/C++ cases use. Its block also
     declares `doconcurrent_ref: DO_CONCURRENT_GFORTRAN`, which is `-ftree-parallelize-loops={n}`
     -- the SAME spelling as the autopar flag -- and that one is appended in EVERY mode by design
-    (user decision 2026-08-11: native constructs parallelize on every family, and the timed child
+    (native constructs parallelize on every family, and the timed child
     always gets real cores). So the mode gate is asserted on the Graphite flags only GCC_AUTOPAR
     contributes, and the do-concurrent flag is pinned separately instead of left as a silent
     string coincidence that makes the mode gate look broken.

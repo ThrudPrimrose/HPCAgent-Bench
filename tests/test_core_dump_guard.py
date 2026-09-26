@@ -4,7 +4,7 @@
 
 Beverin's ``core_pattern`` is the machine-global ``core_%h_%p``, so a crashing process writes a
 multi-GB dump into its CWD -- the checkout -- on a filesystem whose quota is inodes. One campaign
-left 131 of them, 43 GB; a login-node CPF repro left 21.6 GB in two files on 2026-09-20. The guard
+left 131 of them, 43 GB; a login-node CPF repro left 21.6 GB in two files. The guard
 is ``ulimit -c 0`` in every shell entry point, plus :func:`hpcagent_bench.core_dumps.disable` for a
 python process started by a script outside the repo. These tests keep both there, including in
 scripts that are GENERATED rather than checked in, and prove the check FAILS on a regression.
@@ -103,7 +103,7 @@ def test_nothing_samples_stacks_with_the_faulthandler_watchdog() -> None:
     Its watchdog is a C thread that walks every other thread's ``_PyInterpreterFrame`` chain with
     no GIL and no synchronisation. Against an interpreter churning frames -- a dace parse, a sympy
     rewrite -- it dereferences a frame the main thread has already popped and the process dies in
-    ``dump_frame``. Measured 2026-09-20: a 20-line recursion loop plus a 10 ms sampler segfaults in
+    ``dump_frame``. Measured: a 20-line recursion loop plus a 10 ms sampler segfaults in
     seconds on 3.12.3 and 3.14.7, and the same sampler killed a ``warpx_field_gather``
     canonicalize twice for 21.6 GB of core files. The SAFE sampler is
     ``faulthandler.register(signal.SIGUSR1)`` plus an external ``kill -USR1``: that dumps

@@ -179,7 +179,7 @@ def test_ts_ms_is_the_prompt_files_modification_time(tmp_path: pathlib.Path) -> 
 
 
 def test_mcp_run_id_falls_back_to_the_legacy_optarena_key(tmp_path: pathlib.Path) -> None:
-    """Every job through 2026-09-16 wrote its worker's mcp.json under the pre-rename server name
+    """Every job wrote its worker's mcp.json under the pre-rename server name
     ``optarena`` with env key ``OPTARENA_RUN_ID``, never ``HPCAGENT_BENCH_RUN_ID``. Reading only the
     new key gave ``arm_of("") == ""`` for that whole window (cpf/cpfsrc/-clean arms among them) and
     silently dropped their task rows' token decomposition -- the bug this guards."""
@@ -460,7 +460,7 @@ def test_the_token_columns_round_trip_through_sqlite(tmp_path: pathlib.Path) -> 
 # ---------------------------------------------------------------------------------------------
 # A worker dir the job-dir reducer cut down to tokens.json (prompt.txt + mcp.json deleted) still
 # yields its task row: identity from tokens.json + the job's judge rows, and every piece that is
-# missing is COUNTED, never dropped silently (2026-09-19: 2,890 token rows were lost this way).
+# missing is COUNTED, never dropped silently (2,890 token rows were lost this way).
 # ---------------------------------------------------------------------------------------------
 
 

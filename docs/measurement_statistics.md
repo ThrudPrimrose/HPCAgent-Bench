@@ -262,7 +262,7 @@ Rows stamped `mw4x5-final` / `s-mw4x5-v1` (the v5 re-timing) drew the live pool 
 (`rep_variation.pooled_seeds`: `[d0, d1, d2, base, d0, base]`, the base seed timed twice), wrote
 `gated = 1` for an exact 1.0 geomean, `s_bar` on unsolved tasks, and scored a task with an
 ungraded input from the others. They are a different sample of the same rule, kept as a FALLBACK
-(2026-09-23): each submission takes its v2 row and falls back to its v1 row until v2 re-times it;
+: each submission takes its v2 row and falls back to its v1 row until v2 re-times it;
 its two values are never averaged, and every row keeps the stamp it came from (see extraction
 below). Live `/submit` and `/score` keep the live pool.
 

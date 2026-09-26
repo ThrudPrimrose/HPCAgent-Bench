@@ -535,7 +535,7 @@ def cpf_uptake_by_arm(paths: dict[str, pathlib.Path]) -> dict[str, float]:
     (``statistics/iteration_counts.py``, one row per transcript, already folding tool_use blocks out
     of the run's ``claude.log`` files).
 
-    This is the same signal the 2026-09-19 audit counted by hand -- grepping
+    This is the same signal the audit counted by hand -- grepping
     ``mcp__*__canonical_parallel_form`` tool_use out of the transcripts directly
     (``audit-20260918/cpf-token-investigation-0919.md``: oss120b-c-cpf ~12% uptake, qwen38-c-cpf
     ~65%) -- read here from the extraction that already parses that same event stream instead of

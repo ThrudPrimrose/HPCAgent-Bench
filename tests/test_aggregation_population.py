@@ -142,7 +142,7 @@ def test_the_served_roster_is_what_the_arm_was_given_not_the_full_roster() -> No
         population.aggregate_arm("a", "c", {"k1": 4.0, "k9": 2.0}, ["k1", "k2"], population.KernelPolicy.SERVED)
 
 
-# 2026-09-26 USER: a kernel the arm never ran (no graded answer, no judge call: only its task row,
+# a kernel the arm never ran (no graded answer, no judge call: only its task row,
 # the job hit its time limit first) leaves the arm's population; one it ran and failed stays at 1x.
 def test_a_kernel_the_arm_never_ran_is_excluded_while_one_it_ran_and_failed_scores_one() -> None:
     frame = submissions(
@@ -371,7 +371,7 @@ def test_a_non_positive_speed_up_never_becomes_a_final_answer() -> None:
 def test_a_suspect_final_submission_scores_one_not_an_earlier_answer() -> None:
     """Score rule s-v3: a row the judge flagged ``suspect`` measured a timing nobody believes, so it
     is credited 1.0 as the judge credits it; the episode's earlier unflagged submission is NOT
-    substituted (that fallback rewarded an episode for the answer it abandoned). Since 2026-09-21 it
+    substituted (that fallback rewarded an episode for the answer it abandoned). it
     also solved nothing: absent under ``solved``, an unsolved 1.0 under ``served``."""
     rows = submissions(
         [
@@ -424,7 +424,7 @@ def chosen_job(rows: pd.DataFrame) -> list[object]:
 
 
 def test_a_crashed_rerun_falls_back_to_the_older_valid_answer() -> None:
-    """2026-09-23 USER: the latest VALID submission counts, across runs. A rerun that timed out or
+    """The latest VALID submission counts, across runs. A rerun that timed out or
     crashed without a valid answer does not erase an older answer graded under the final rule."""
     rows = rerun(
         {"row_kind": "submission", "speedup": 9.0, "ts_ms": 10, **FINAL},
@@ -475,7 +475,7 @@ def test_a_rerun_whose_every_row_is_tainted_never_supersedes_the_run_before_it(m
 
 
 def test_a_v1_final_grade_is_a_valid_answer_until_v2_re_times_it() -> None:
-    """2026-09-23 USER: plots accept the v5 re-timing (mw4x5-final) as the fallback for a
+    """Plots accept the v5 re-timing (mw4x5-final) as the fallback for a
     submission not yet re-timed under mw4x5."""
     rows = rerun(
         {"row_kind": "submission", "speedup": 9.0, "ts_ms": 10, **FINAL},

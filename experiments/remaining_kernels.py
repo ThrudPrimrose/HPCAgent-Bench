@@ -157,7 +157,7 @@ SMOKE_ARM = re.compile(r"(?:^|-)smoke\d*(?:-|$)")
 #: nothing else distinguishing it -- ``runs.arm``, ``runs.experiment`` and the run root all read
 #: exactly like the real wave's). No recorded field tells these apart from a real job, so unlike
 #: :data:`SMOKE_ARM` this is a plain, documented exception list rather than a pattern.
-#: 642813 (2026-09-23 user decision) is the same case: submitted as
+#: 642813 is the same case: submitted as
 #: ``harness20-caveman-qwen38-c-clean-kernels-harness20-caveman-smoke2`` (12M/4h, 2 kernels) but
 #: recording ``runs.arm = harness20-caveman-qwen38-c-clean``, so only its sacct job name -- which
 #: wave_board reads and this script never does -- says smoke. Listed here, both readers agree.
@@ -521,7 +521,7 @@ def graded_since(job_dir: str, opt: str, query: str, args: tuple) -> set:
     worker's ``final_attempt_start_ms`` (:func:`final_attempt_cuts`): a crashed attempt is relaunched
     from an empty workspace, so a grade it filed answers nothing the finished episode delivered, and
     every figure drops that row (spec X7, hpcagent_bench.experiments.drop_pre_relaunch_rows).
-    Counting it here left such a kernel DONE with no answer in any figure (2026-09-23, 641069
+    Counting it here left such a kernel DONE with no answer in any figure (641069
     fuse_move_ifs). An episode with no recorded cut keeps its rows, as X7 does."""
     seen: set = set()
     thresholds: dict = {}

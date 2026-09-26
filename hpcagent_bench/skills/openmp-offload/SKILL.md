@@ -197,17 +197,17 @@ The language rules themselves are in `lang-c` / `lang-cpp` / `lang-fortran`; the
 
 ## References
 
-Measured on this box 2026-09-04, ROCm 7.2.3 / AMD clang 22.0.0git, MI300A: the host-fallback build, the
+Measured on this box, ROCm 7.2.3 / AMD clang 22.0.0git, MI300A: the host-fallback build, the
 `MANDATORY` non-fire, the four-way xnack matrix (622425), the wrong-arch fatal error, the 3.1x hoisting result,
 the single-pass offload LOSS (raw 0.83x, measured through the judge), and the `num_teams` null result.
 
-Re-checked 2026-09-07 (job 626529, same image) by compiling and RUNNING every sample and every testable claim
+Re-checked (job 626529, same image) by compiling and RUNNING every sample and every testable claim
 on this page: 22 cases, 21 held. The two that did not are corrected above -- `declare target` is implicit for a
 same-translation-unit callee, and `requires unified_shared_memory` faults at run time rather than being
 rejected for the XNACK mode. The map-clause rules, the enter/exit map-type restrictions, the unmapped-scalar
 trap, every construct, and the Fortran spellings all reproduced as written.
 
-Consulted 2026-09-04:
+Consulted:
 - OMP_TARGET_OFFLOAD (MANDATORY / DISABLED / DEFAULT) -- https://www.openmp.org/spec-html/5.0/openmpse65.html
 - LIBOMPTARGET_INFO bit field and the other runtime knobs -- https://openmp.llvm.org/design/Runtimes.html
 - HSA_XNACK, requires unified_shared_memory, implicit zero-copy on MI300A --

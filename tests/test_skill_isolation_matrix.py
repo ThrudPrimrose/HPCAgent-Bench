@@ -5,7 +5,7 @@ against every OTHER surface an agent can read a gated capability off -- the MCP 
 task-text announcement, and the shared task material -- not just the two or three arms a targeted
 test already pins.
 
-The 2026-09-15 leak (``canonical_parallel_form`` served to every arm, not only ``cpf``'s) was fixed
+The leak (``canonical_parallel_form`` served to every arm, not only ``cpf``'s) was fixed
 and pinned for THREE arms (bare, ``lang-skills``, ``cpf``) in tests/test_packet_wiring.py. That
 leaves the other 19 registered keys unchecked on the same surface: a packet added later, or a packet
 whose own env happens to collide with ``PACKET_TOOL_SWITCH``'s value, has no test that would catch
@@ -148,7 +148,7 @@ def test_the_mcp_tool_list_matches_exactly_what_this_key_declares(key: str) -> N
 
 
 def test_no_registered_key_other_than_cpf_ever_serves_the_canonical_parallel_form_tool() -> None:
-    """The exact 2026-09-15 leak, restated as a universal negative: every OTHER key's own env,
+    """The exact observed leak, restated as a universal negative: every OTHER key's own env,
     resolved for real, must never make the judge's cpf route answer anything but absent."""
     leaking = [
         key

@@ -257,7 +257,7 @@ def test_no_score_is_an_alias_of_the_registered_key_and_takes_no_hue_slot_of_its
 
 
 def test_every_registered_treatment_wears_its_own_shape_and_none_wears_the_control_circle() -> None:
-    """USER 2026-09-25: "repository" and "perf playbook" drew the same plus. The shape of a packet or
+    """ "repository" and "perf playbook" drew the same plus. The shape of a packet or
     a harness comes from one registry pool, one per treatment, so two treatments can never be told
     apart by colour alone -- colour is the model's."""
     table = palette.shape_table()
@@ -292,7 +292,7 @@ def test_model_colour_is_reused_by_the_packet_efficacy_panels() -> None:
 
 
 def test_a_control_is_the_hollow_circle_in_a_lighter_shade_of_its_models_colour_in_every_figure() -> None:
-    """USER 2026-09-25: one shape and one shade rule for "no packet" in every figure, so a reader
+    """one shape and one shade rule for "no packet" in every figure, so a reader
     learns it once. Each figure module reads it from the palette instead of keeping its own copy."""
     from hpcagent_bench.stats.figures import efficacy, scaling
 

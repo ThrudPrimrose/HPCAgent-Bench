@@ -301,7 +301,7 @@ registry-dropped arms left out:
   y = x line, shape = language (`palette.language_marker`: the registry `markers` in `languages`
   order). Failures on GH200 are not drawn (counted in the summary). Title: device and Spearman rho.
 
-A GH200 judge error counts as failed there (user, 2026-09-25); an answer not portable to GH200 was
+A GH200 judge error counts as failed there; an answer not portable to GH200 was
 never graded and is counted apart. Panels with nothing to draw are pending stubs. Input is the paired
 frame (`transfer.PAIRED_COLUMNS`), from the observations or from the Daint join table
 (`collect.py`); there an answer with no MI300A final grade falls back to its live grade

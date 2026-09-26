@@ -808,7 +808,7 @@ def refile_as_adhoc(shard: pathlib.Path, observations: pathlib.Path) -> None:
 
 
 def test_a_worklist_never_lists_a_grade_stored_under_the_adhoc_run_id(tmp_path: pathlib.Path) -> None:
-    """No reader credits an ``adhoc`` row (2026-09-22), yet the v6 re-timing listed 10 of them: shard
+    """No reader credits an ``adhoc`` row, yet the v6 re-timing listed 10 of them: shard
     time spent on rows every figure then drops. Each is named as a gap, with its source still stored."""
     shard = shard_db(tmp_path)
     observations = observations_db(tmp_path, shard)
@@ -1642,7 +1642,7 @@ def add_job_scripts(repo: pathlib.Path) -> None:
 
 def test_the_regrade_job_compiles_the_tree_with_the_hosts_python311(tmp_path: pathlib.Path) -> None:
     """The syntax gate runs on the bare batch host, whose python3 is SLES 3.6 (the login node's too
-    since 2026-09-23): it cannot parse the package, so a job whose PATH lacked the venv refused
+    since): it cannot parse the package, so a job whose PATH lacked the venv refused
     every tree as "does not compile" and graded nothing."""
     repo = tmp_path / "repo"
     (repo / "hpcagent_bench" / "harness").mkdir(parents=True)

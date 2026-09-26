@@ -63,7 +63,7 @@ def ratios_with_geomean_and_gsd(g: float, gsd: float) -> tuple[float, float]:
 
 
 def test_a_huge_win_outside_the_band_is_credited_at_its_own_value() -> None:
-    """USER 2026-09-20: no clamp anywhere. g_i = 10000, gsd_i = 2500 clears the gsd band
+    """no clamp anywhere. g_i = 10000, gsd_i = 2500 clears the gsd band
     (|ln 10000| > ln 2500), so it is credited at its own 10000x -- under s-v4 this same task
     scored a clamped 2000; under s-v3 it scored 1.0 (the clamped value sat inside the band)."""
     ratios = ratios_with_geomean_and_gsd(10000.0, 2500.0)

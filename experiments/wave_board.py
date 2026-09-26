@@ -766,7 +766,7 @@ def canon_rows(scratch: pathlib.Path, opt: str) -> list[dict]:
 #: superseded (harness-focus20 by harness20) or out of scope (GLM-5.3, CPF on SciComp).
 OFF_BOARD = re.compile(r"optimas|gpusmoke5|bout_h|^harness-focus20|-glm53-|^scicomp-dc-[^-]+-cpf")
 
-#: Board section -> its sub-sections, top to bottom (2026-09-25 user order). A sub-section with no
+#: Board section -> its sub-sections, top to bottom. A sub-section with no
 #: row still shows, as "none".
 SECTIONS: dict[str, tuple[str, ...]] = {
     "LLR": ("CPU", "GPU", "CPU blind", "GPU blind", "CPF CPU", "CPF GPU", "Caveman", "Compiler comparators"),

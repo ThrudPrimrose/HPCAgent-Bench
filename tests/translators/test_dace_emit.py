@@ -997,7 +997,7 @@ def test_where_of_two_scalar_parameters_gets_one_branch_broadcast_to_the_conditi
     )
 
 
-# Refusal classes the 2026-08-07 re-sweep pinned.
+# Refusal classes the re-sweep pinned.
 
 
 def test_an_elementwise_update_keeps_the_extents_the_workspace_already_had() -> None:

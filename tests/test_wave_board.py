@@ -21,7 +21,7 @@ MODELS = ("kimi27sglang", "oss120b", "qwen38", "glm53")
 #: A row's ``ts``, arbitrary-but-after-any-real-commit: these tests use fake kernel names ("a", "b",
 #: "c", "d", "retired_kernel") that resolve no real manifest, so remaining_kernels.comparable_since_ms
 #: always returns 0 for them regardless of the ``opt`` these tests pass -- it exists only because the
-#: real schema requires the column (2026-09-18 manifest-epoch fix).
+#: real schema requires the column (manifest-epoch fix).
 FAR_FUTURE_TS_MS = 10**13
 
 
@@ -68,7 +68,7 @@ def test_an_arm_name_splits_into_its_campaign_model_and_variant(
     board: types.ModuleType, arm: str, expected: tuple[str, str, str]
 ) -> None:
     """split_arm never sees a ``-clean`` suffix: arm_rows folds a clean re-run into the identity it
-    re-runs (2026-09-18, remaining_kernels.base_arm) before split_arm is ever called on it."""
+    re-runs before split_arm is ever called on it."""
     assert board.split_arm(arm, MODELS) == expected
 
 
@@ -96,7 +96,7 @@ def test_scicomp_dc_gpu_wins_over_its_cpu_prefix(board: types.ModuleType) -> Non
 
 
 def test_scicomp_baseline_and_perf_playbook_are_one_board_experiment(board: types.ModuleType) -> None:
-    """User 2026-09-19 (corrected same day): scicomp-dc (the plain baseline), scicomp-dc-gpu,
+    """scicomp-dc (the plain baseline), scicomp-dc-gpu,
     scicomp-perf-playbook and scicomp-perf-playbook-gpu report under ONE name -- "..., Perf Playbook",
     no "Divide and Conquer" and no ", GPU" suffix, CPU and GPU alike -- split into a CPU and a GPU
     section only by device (the board groups rows by (experiment, device))."""
@@ -154,7 +154,7 @@ def test_a_fused_wave_covers_only_the_kernels_it_was_planned_with(
     unqueued: int,
     status: str,
 ) -> None:
-    """2026-09-23: an arm owing b and c with a queued owed wave holding only b showed ``running``,
+    """An arm owing b and c with a queued owed wave holding only b showed ``running``,
     as if c were covered too, and no wave would ever be planned for c from the board. A fused wave
     grades only its problems file's kernels (owed_wave.queue_state reads the queue the same way);
     a snapshot that cannot be read stays ``running`` rather than guess."""
@@ -293,7 +293,7 @@ def test_a_touched_kernel_outside_the_roster_does_not_inflate_done(
 
 
 def test_a_clean_reruns_row_folds_into_the_arm_it_supersedes(board: types.ModuleType, tmp_path: pathlib.Path) -> None:
-    """The clean job's coverage ADDS to the plain arm's (2026-09-18 fold), so an arm the clean re-run
+    """The clean job's coverage ADDS to the plain arm's (fold), so an arm the clean re-run
     only partly repeated still reads its plain jobs' rows too, not just the clean one's."""
     arm = "cpf-llr-focus40-oss120b-c-cpfsrc"
     dirs = {
@@ -302,14 +302,14 @@ def test_a_clean_reruns_row_folds_into_the_arm_it_supersedes(board: types.Module
     }
     jobs = [board.Job("100", arm, "COMPLETED", 3, "", ""), board.Job("200", arm + "-clean", "COMPLETED", 3, "", "")]
     row = board.arm_row(arm, jobs, dirs, ["a", "b", "c"], MODELS, str(tmp_path))
-    assert "clean" not in row, row  # clean vs non-clean is not a board distinction (2026-09-18)
+    assert "clean" not in row, row  # clean vs non-clean is not a board distinction
     assert (row["done"], row["status"]) == (3, "complete"), row
     assert [job["id"] for job in row["jobs"]] == ["100", "200"], row
 
 
 def test_owed_kernels_split_into_placeholder_budget_and_infra(board: types.ModuleType, tmp_path: pathlib.Path) -> None:
     """A kernel with no ``submissions`` row whose episode ended on its own (context overflow, rc
-    126) is a PLACEHOLDER -- owed, not delivered (2026-09-20); one that hit its own timeout (rc 124)
+    126) is a PLACEHOLDER -- owed, not delivered; one that hit its own timeout (rc 124)
     is owed at BUDGET; one the job cancelled mid-episode is owed as INFRA. All three must be told
     apart in one arm's row, and all three count against ``roster - done``."""
     arm = "cpf-llr-focus40-oss120b-c-cpfsrc"
@@ -342,7 +342,7 @@ def job_dir_with_attempt(root: pathlib.Path, job_id: str, benchmark: str, reason
 
 
 def test_a_genuine_attempt_is_delivered_not_a_placeholder(board: types.ModuleType, tmp_path: pathlib.Path) -> None:
-    """2026-09-19: a real ``/submit`` the judge graded and rejected is a genuine answer -- it must
+    """A real ``/submit`` the judge graded and rejected is a genuine answer -- it must
     count toward ``delivered``, not the forced-1x ``placeholder`` bucket."""
     arm = "cpf-llr-focus40-oss120b-c-cpfsrc"
     dirs = {"100": job_dir_with_attempt(tmp_path, "100", "a", "incorrect")}
@@ -363,13 +363,13 @@ def test_a_harness_fault_attempt_is_a_placeholder_not_delivered(
     dirs = {"100": job_dir}
     jobs = [board.Job("100", arm, "COMPLETED", 3, "", "")]
     row = board.arm_row(arm, jobs, dirs, ["a"], MODELS, str(tmp_path))
-    # 2026-09-20: "done" is DELIVERED only -- a placeholder is owed, not done.
+    # "done" is DELIVERED only -- a placeholder is owed, not done.
     assert (row["done"], row["delivered"], row["placeholder"], row["status"]) == (0, 0, 1, "incomplete"), row
 
 
 def test_placeholder_done_kernels_split_from_delivered_ones(board: types.ModuleType, tmp_path: pathlib.Path) -> None:
     """A row combining a real submission with a self-exited placeholder must report both counts, and
-    a placeholder is OWED (2026-09-20: superseded the 2026-09-18 "never rerun" meaning) -- an arm
+    a placeholder is OWED (superseded the "never rerun" meaning) -- an arm
     holding one is never ``complete``, and ``done`` counts DELIVERED kernels only."""
     arm = "cpf-llr-focus40-oss120b-c-cpfsrc"
     job_dir = job_dir_with_rows(tmp_path, "100", ["a"])  # a: a real submissions row
@@ -381,7 +381,7 @@ def test_placeholder_done_kernels_split_from_delivered_ones(board: types.ModuleT
 
 
 def test_a_placeholder_is_owed_and_blocks_complete_at_the_row(board: types.ModuleType, tmp_path: pathlib.Path) -> None:
-    """The exact scenario the 2026-09-20 board fix exists for: 7 delivered, 3 forced-1x
+    """The exact scenario the board fix exists for: 7 delivered, 3 forced-1x
     placeholders, a 10-kernel roster. The row must read 7/10 (delivered only), the 3 placeholders
     must be OWED (not a separate non-owed footnote), and the row can never show "complete" while
     any of them stand -- a placeholder is scored 1x but no real grade happened."""
@@ -430,7 +430,7 @@ def test_arm_row_forwards_opt_so_a_stale_pre_resize_row_stays_owed(
 ) -> None:
     """arm_row's ``opt`` argument must actually reach remaining_kernels.touched, not get dropped on
     the way down through kernel_status -- a submissions row graded before the kernel's own manifest
-    last changed (2026-09-18 manifest-epoch fix, job 641739) must leave the board reporting it owed,
+    last changed (manifest-epoch fix, job 641739) must leave the board reporting it owed,
     not done, exactly like remaining_kernels.py's own report would."""
     repo, kernel, changed_ts_ms = make_git_repo_with_manifest(tmp_path)
     arm = "cpf-llr-focus40-oss120b-c-cpfsrc"
@@ -592,9 +592,9 @@ def test_canon_rows_join_the_arms_list_as_their_own_experiment_group(
 def test_a_clean_rerun_folds_into_one_board_row(
     board: types.ModuleType, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """PROPERTY CHANGED on purpose (user, 2026-09-18): an arm and its clean re-run are ONE identity,
+    """PROPERTY CHANGED on purpose: an arm and its clean re-run are ONE identity,
     ONE board row, union coverage over both -- not two rows and not the clean one replacing the
-    other (the 2026-09-15 rule showed both; a 2026-09-18 rule before this one showed only the clean)."""
+    other (the rule showed both; a rule before this one showed only the clean)."""
     arm = "cpf-llr-focus40-oss120b-c-cpfsrc-v2"
     runs = tmp_path / "runs" / "cpf-llr-focus40-20260915"
     for job_id, names in (("100", ["a"]), ("200", ["b"])):
@@ -607,14 +607,14 @@ def test_a_clean_rerun_folds_into_one_board_row(
     rows = board.arm_rows(tmp_path / "runs", "/opt", MODELS)
 
     assert [(row["arm"], row["done"], row["status"]) for row in rows] == [(arm, 2, "complete")]
-    assert "clean" not in rows[0], rows  # clean vs non-clean is not a board distinction (2026-09-18)
+    assert "clean" not in rows[0], rows  # clean vs non-clean is not a board distinction
     assert [job["id"] for job in rows[0]["jobs"]] == ["100", "200"], rows
 
 
 def test_a_smoke_job_that_reused_a_real_arms_name_is_excluded(
     board: types.ModuleType, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Job 641175 (2026-09-18): a smoke sanity check submitted under a REAL arm's name, with nothing
+    """Job 641175: a smoke sanity check submitted under a REAL arm's name, with nothing
     in ``runs.arm`` or the job name telling it apart. Its rows must not count as that arm's coverage,
     or an arm the smoke run never really covered reads as further along than its real jobs show."""
     arm = "harness20-qwen38-claude"
@@ -639,7 +639,7 @@ def test_a_smoke_job_that_reused_a_real_arms_name_is_excluded(
 def test_a_numbered_smoke_named_job_does_not_leak_into_a_real_campaign(
     board: types.ModuleType, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Job 642813 (2026-09-23): "harness20-caveman-qwen38-c-clean-kernels-harness20-caveman-smoke2"
+    """Job 642813: "harness20-caveman-qwen38-c-clean-kernels-harness20-caveman-smoke2"
     is a re-submitted smoke run (SMOKE_ARM's numbered ``-smoke2``), but no CAMPAIGNS entry is a
     prefix of its exact name, so ``campaign_of`` folded it into "harness20" and it showed up there
     as a phantom arm. It must be excluded before ``by_arm`` ever sees it, the same as a job whose id
@@ -673,9 +673,9 @@ def test_a_numbered_smoke_named_job_does_not_leak_into_a_real_campaign(
 def test_an_arm_the_user_dropped_is_not_on_the_board(
     board: types.ModuleType, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch, arm: str
 ) -> None:
-    """User 2026-09-18: union-alpha, scicomp C++ and scicomp GPU c-openmp arms are out of the
-    experiments (the LLR CPU Fortran arms are back in, 2026-09-25); a kept sibling (scicomp Fortran, GPU hip) must stay. (A dropped arm listed for
-    rerun in rerun-lost.tsv is the 2026-09-19 exception, tested apart; no list here.)"""
+    """union-alpha, scicomp C++ and scicomp GPU c-openmp arms are out of the
+    experiments (the LLR CPU Fortran arms are back in); a kept sibling (scicomp Fortran, GPU hip) must stay. (A dropped arm listed for
+    rerun in rerun-lost.tsv is the exception, tested apart; no list here.)"""
     monkeypatch.setattr(board, "RERUN_LOST", tmp_path / "no-rerun-list.tsv")
     runs = tmp_path / "runs" / "x-20260918"
     job_dir_with_rows(runs, "100", ["a"])
@@ -723,7 +723,7 @@ def test_only_cpfsrc_v2_stays_on_the_board(board: types.ModuleType, job_name: st
 def test_placement_puts_each_paper_arm_in_its_section_and_leaves_the_rest_off(
     board: types.ModuleType, arm: str, campaign: str, variant: str, place: tuple[str, str] | None
 ) -> None:
-    """The board shows the paper's experiments in the user's order (2026-09-25); a voided or
+    """The board shows the paper's experiments in the user's order; a voided or
     superseded arm, or a grade job read as an arm by its name, has no place."""
     assert board.placement({"arm": arm, "campaign": campaign, "variant": variant}) == place
 

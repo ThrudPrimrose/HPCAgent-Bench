@@ -470,7 +470,7 @@ def group_answer(rows: "pd.DataFrame") -> float:
 
 
 def drop_pre_relaunch_rows(frame: "pd.DataFrame") -> "pd.DataFrame":
-    """``frame`` with each relaunched task reduced to its BEST attempt group (spec X7, USER 2026-09-25).
+    """``frame`` with each relaunched task reduced to its BEST attempt group (spec X7, USER).
 
     A crashed attempt is relaunched from an empty workspace (T5). The task row records only when the
     FINAL attempt started (``task_final_attempt_start_ms``), so a task's judge rows split in two groups:
@@ -478,7 +478,7 @@ def drop_pre_relaunch_rows(frame: "pd.DataFrame") -> "pd.DataFrame":
     its last believable submission (:func:`group_answer`), the within-episode rule. The task's answer
     is the better of the two: the losing group's judge rows are dropped, so the earlier attempt's
     answer stands when the final attempt did worse or answered nothing, and the final attempt's
-    otherwise (the reading before 2026-09-25, when the earlier group was always dropped). A task
+    otherwise (the earlier reading always dropped the earlier group). A task
     without a cut (never relaunched, or extracted before the stamp) keeps its rows, and the task row
     is always kept. The frame changes, never the database (N1), and the count is warned about.
     """

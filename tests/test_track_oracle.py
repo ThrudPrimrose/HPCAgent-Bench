@@ -171,7 +171,7 @@ def test_no_held_out_rung_exceeds_the_shape_being_graded() -> None:
 
 
 def test_an_empty_ladder_keeps_every_case_at_the_timed_preset() -> None:
-    """The pre-2026-08-14 behaviour stays reachable by emptying the knob."""
+    """The previous behaviour stays reachable by emptying the knob."""
     from hpcagent_bench.harness import hidden_tests
 
     spec = BenchSpec.load(LOOP_KERNEL)

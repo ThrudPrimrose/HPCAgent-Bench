@@ -476,7 +476,7 @@ def test_the_interval_note_is_fixed_text_and_does_not_name_the_estimator() -> No
     """Fixed text, so the key carries it once
     (:func:`~hpcagent_bench.stats.figures.efficacy.legend_tail`). The estimator is NOT named: "95%
     log-t CI" on two of five rows was the densest text in the figure, and which interval it is
-    belongs in the caption beside the test it came from (user, 2026-09-20)."""
+    belongs in the caption beside the test it came from."""
     note = efficacy_figures.interval_note("Speedup")
     assert "log-t" not in note, note
     assert note == efficacy_figures.interval_note("Speedup"), "fixed text, not sample-size-chosen"
@@ -502,7 +502,7 @@ def test_the_figure_key_carries_one_interval_note_per_axis() -> None:
 def test_the_key_explains_a_superscript_exactly_when_the_panel_drew_one(
     symbols: tuple[bool, bool], wanted: list[str]
 ) -> None:
-    """A reader meeting ``*`` beside a mark has to be able to look it up (user, 2026-09-20). A row
+    """A reader meeting ``*`` beside a mark has to be able to look it up. A row
     for a symbol NO mark wears is the opposite problem: a lookup made for nothing."""
     labels = [h.get_label() for h in efficacy_figures.legend_tail(symbols)]
     explained = [line for line in labels if "Significant" in line]
@@ -723,7 +723,7 @@ def test_a_comparison_specs_own_repeats_overrides_the_row_default(
 @pytest.mark.parametrize("treatment", ["lang-skills", "cpf", "cpfsrc", "repo", "no-score-tool"])
 def test_no_packet_is_ever_given_the_shape_the_control_wears(treatment: str) -> None:
     """The control is HOLLOW, and hollow-versus-filled alone does not separate two marks once a
-    figure is reduced to a column (user, 2026-09-20): it is a different OUTLINE. A packet handed
+    figure is reduced to a column: it is a different OUTLINE. A packet handed
     that outline would put a filled circle beside a hollow one and undo the separation."""
     assert efficacy_figures.treatment_marker(treatment) != efficacy_figures.CONTROL_MARKER
 
@@ -739,7 +739,7 @@ def test_a_difference_spec_reads_delivery_colon_model_pairs() -> None:
     ("value", "want"), [(6.34919, "6.3x"), (0.92137, "0.9x"), (1.0, "1.0x"), (4.0, "4.0x"), (0.5, "0.5x")]
 )
 def test_an_arrows_factor_is_printed_to_one_decimal(value: float, want: str) -> None:
-    """The label beside a mark is what a reader quotes, one decimal (user, 2026-09-21); the tick
+    """The label beside a mark is what a reader quotes, one decimal; the tick
     spelling keeps full precision, which beside a mark reads as ``6.34919x``."""
     assert plotstyle.ratio_label(value) == want
 
@@ -766,7 +766,7 @@ def test_only_a_named_comparison_gets_an_arrow_and_it_carries_the_factor(measure
         finally:
             plt.close(fig)
 
-    # Printed as every value beside a mark is, to one decimal (``style.ratio_label``, 2026-09-21).
+    # Printed as every value beside a mark is, to one decimal (``style.ratio_label``).
     assert plotstyle.ratio_label(4.0) in texts(frozenset({("qwen38", "HIP")}))
     assert plotstyle.ratio_label(4.0) not in texts(frozenset())
 
@@ -774,8 +774,8 @@ def test_only_a_named_comparison_gets_an_arrow_and_it_carries_the_factor(measure
 @pytest.mark.parametrize("measure", ["speedup", "cost"])
 def test_a_measure_row_border_never_opens_an_empty_tick_step(measure: str) -> None:
     """A border snaps to the next tick only when the data reaches within half a step of it; a 0.94x
-    interval end opened the speedup axis down to 0.5x, a whole empty step (user, 2026-09-25).
-    Earlier (2026-09-20) every border snapped to a tick."""
+    interval end opened the speedup axis down to 0.5x, a whole empty step.
+    Earlier every border snapped to a tick."""
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots()
@@ -1018,7 +1018,7 @@ def solved_and_failed_pair() -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def test_by_default_a_wrong_answer_is_no_speedup_and_counts_against_the_success_rate() -> None:
-    """2026-09-21: the speedup of both arms is over the kernels BOTH solved, so the control's wrong
+    """The speedup of both arms is over the kernels BOTH solved, so the control's wrong
     k4 is not scored as its baseline and the treated arm's k4 win does not lift it either; the
     failure is the success rate's to show."""
     points = efficacy_figures.arm_points(*solved_and_failed_pair())
@@ -1069,9 +1069,9 @@ def test_dropping_the_success_row_keeps_the_width_and_every_other_box(
 ) -> None:
     """The success row is optional: turning it off may only shorten the canvas. A figure with and
     one without it sit in one paper, so the speedup and cost boxes must be the same size in both.
-    The success row is 0.45 of a row and the speedup and cost rows 0.7 of one (user, 2026-09-22),
+    The success row is 0.45 of a row and the speedup and cost rows 0.7 of one,
     so the success row is its MEASURE_HEIGHT share of a speedup row (0.45/0.875 since the speedup
-    row grew 25%, user 2026-09-25)."""
+    row grew 25%, user)."""
     full = drawn_dot_row(tmp_path, monkeypatch, efficacy_figures.MEASURES)
     short = drawn_dot_row(tmp_path, monkeypatch, ("speedup", "cost"))
     assert full.get_size_inches()[0] == pytest.approx(short.get_size_inches()[0])
@@ -1098,7 +1098,7 @@ def test_a_full_roster_mark_on_the_ceiling_is_drawn_whole() -> None:
 
 
 def test_the_success_row_draws_its_marks_and_no_interval() -> None:
-    """The roster is fixed, so the count solved is a census, not a sample (user, 2026-09-22): a Wilson
+    """The roster is fixed, so the count solved is a census, not a sample: a Wilson
     bar under a 10/10 mark reaching down to 7 read as seven solved."""
     fig, ax = plt.subplots()
     row = efficacy_figures.ArmRow("qwen38", "HIP", "#1f77b4", arm(1.0, 2.0, 7, 10), arm(1.0, 2.0, 10, 10))
@@ -1116,7 +1116,7 @@ def test_the_success_row_draws_its_marks_and_no_interval() -> None:
 def test_a_success_mark_sits_at_the_solved_rate(
     solved: tuple[int, int], served: int, want: list[tuple[float, float]]
 ) -> None:
-    """USER 2026-09-25: the row is the solved RATE, solved over served, so pairs with different
+    """The row is the solved RATE, solved over served, so pairs with different
     rosters share one 0-100% scale; the control's hollow mark left of the column, the treated one
     right, and a 10/10 arm exactly on the 100% ceiling."""
     fig, ax = plt.subplots()
@@ -1132,7 +1132,7 @@ def test_a_success_mark_sits_at_the_solved_rate(
 def test_every_value_row_of_the_dot_row_carries_a_minor_grid(
     tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """User, 2026-09-22: more minor ticks on the paper plots -- the speedup, tasks-completed and
+    """More minor ticks on the paper plots -- the speedup, tasks-completed and
     token rows alike, each ruled by its own axis kind (log2 units, a count, a log10 count)."""
     kept: list[Figure] = []
     monkeypatch.setattr(plotstyle, "save", lambda fig, stem, fixed=False, **options: kept.append(fig) or stem)
@@ -1365,7 +1365,7 @@ def test_without_mark_pending_a_pending_category_stays_empty(
 ) -> None:
     fig = pending_dot_row(tmp_path, monkeypatch, mark=False)
     assert not any(t.get_gid() == plotstyle.PENDING_GID for ax in fig.axes for t in ax.texts)
-    # The slots are kept either way: two models of one language share one tick (user, 2026-09-25)
+    # The slots are kept either way: two models of one language share one tick
     # and the pending one still holds its column's width.
     assert len(fig.axes[0].get_xticks()) == 1
     assert fig.axes[0].get_xlim() == pytest.approx((-0.6, efficacy_figures.GROUP_STEP + 0.6))
@@ -1375,7 +1375,7 @@ def test_the_key_is_centred_on_the_canvas_and_never_wider(
     tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """The key is centred on the whole canvas, Y-label strip included, so it sits on the page's
-    centre (user, 2026-09-25; before, it was centred on the panels alone), and it drops columns
+    centre (user; before, it was centred on the panels alone), and it drops columns
     before it runs past the canvas."""
     fig = pending_dot_row(tmp_path, monkeypatch, mark=True)
     renderer = fig.canvas.get_renderer()
@@ -1401,7 +1401,7 @@ def test_a_single_value_axis_is_left_unsnapped() -> None:
 @pytest.mark.parametrize(
     ("marks", "cost", "want"),
     [
-        # 2026-09-25: marks at or above 1x floor the row at 1x (log2 0), the interval cut there.
+        # marks at or above 1x floor the row at 1x (log2 0), the interval cut there.
         pytest.param([0.0, 3.0], False, (0.0, 5.0), id="speedup-floored-at-1x"),
         pytest.param([-1.0, 3.0], False, (-3.0, 5.0), id="speedup-mark-below-1x-keeps-two-octaves"),
         pytest.param([1e5, 4e5], True, (2.5e4, 1.6e6), id="cost-a-factor-four-past-the-marks"),
@@ -1411,9 +1411,9 @@ def test_a_single_value_axis_is_left_unsnapped() -> None:
 def test_intervals_reach_a_factor_four_past_the_outermost_marks(
     marks: list[float], cost: bool, want: tuple[float, float]
 ) -> None:
-    """User, 2026-09-22: a few-kernel interval down to 0.004x stretched the GPU panel over twenty
+    """A few-kernel interval down to 0.004x stretched the GPU panel over twenty
     octaves and its ticks read 0.00391x; the panel now spans its marks and a bounded reach. User,
-    2026-09-25: only an interval that runs that far past the marks is cut, with an arrowhead, and a
+    only an interval that runs that far past the marks is cut, with an arrowhead, and a
     speedup row whose marks are all at or above 1x is cut at 1x."""
     assert efficacy_figures.interval_bounds(marks, cost, efficacy_figures.PAPER_CONFIG) == pytest.approx(want)
 
@@ -1437,7 +1437,7 @@ def few_kernel_arm(x: float, kernels: int) -> efficacy_figures.ArmPoint:
 
 
 def test_a_mark_from_fewer_than_six_kernels_draws_no_interval_and_does_not_stretch_the_axis() -> None:
-    """User, 2026-09-22: Qwen's GPU OpenMP control solved three kernels, its interval ran 0.19x to
+    """Qwen's GPU OpenMP control solved three kernels, its interval ran 0.19x to
     302x and was the only one in the figure cut at both ends; below six kernels (the paper's rule,
     summary.MIN_PAIRS_FOR_INTERVAL) the mark stands alone."""
     lines = {}
@@ -1543,7 +1543,7 @@ def test_a_comparator_never_wears_a_packets_shape_or_shares_one() -> None:
 
 
 def test_the_paper_key_sets_five_columns(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """USER 2026-09-25: five columns, so the paper key takes two lines instead of three."""
+    """Five columns, so the paper key takes two lines instead of three."""
     assert efficacy_figures.PAPER_CONFIG.legend_ncol == 5
     fig = comparator_dot_row(tmp_path, monkeypatch)
     renderer = fig.canvas.get_renderer()

@@ -205,7 +205,7 @@ def test_an_input_the_rule_calls_unsolved_leaves_the_submission_unsolved(
     assert counts["unsolved"] == 1 and counts["replaced"] == 0
 
 
-# 2026-09-26 USER: a task no input of which produced a measurement (the per-run time limit, a crash,
+# a task no input of which produced a measurement (the per-run time limit, a crash,
 # a baseline that itself times out) has no grade under the final protocol; the answer keeps its last
 # valid grade. Before this it was read as unsolved.
 def test_a_submission_no_input_measured_keeps_its_live_grade(tmp_path: pathlib.Path) -> None:

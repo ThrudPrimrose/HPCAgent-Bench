@@ -152,7 +152,7 @@ def test_arm_tokens_reads_one_tasks_total_never_a_sum() -> None:
 
 def test_arm_tokens_reads_a_rerun_kernels_latest_task_total_not_the_sum_of_both() -> None:
     """A rerun kernel's token cell is the LATEST task's own total (R4): summing both tasks would
-    bill an arm twice for being resubmitted, which the pre-2026-09-15 reduction did (spec F1)."""
+    bill an arm twice for being resubmitted, which the earlier reduction did (spec F1)."""
     arm = "cpf-llr-focus40-qwen38-c"
     frame = observations(
         [
@@ -199,7 +199,7 @@ def test_git_scicomps_two_conditions_both_read_as_proper_names() -> None:
     Repository" off the registry, but ``kernel`` fell through to the bare arm-name token because
     nothing named it there -- the legend read "kernel" beside "Repository Formulation", one condition
     properly named and the other not."""
-    assert llr40_arms.condition_label("repo") == "Git Reformulation"  # registry display name since 2026-09-25
+    assert llr40_arms.condition_label("repo") == "Git Reformulation"  # registry display name
     assert llr40_arms.condition_label("kernel") == "Bare Kernel"
 
 

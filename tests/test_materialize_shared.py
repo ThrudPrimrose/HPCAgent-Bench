@@ -538,5 +538,5 @@ def test_no_treatment_hints_file_is_staged_for_every_arm(
 ) -> None:
     """A control arm must not be handed treatment material. The caveman skill page was copied to
     <shared>/caveman.md on EVERY arm although no arm's AGENT_HINTS_FILE names it, and control agents
-    that listed /shared read it (8 of 120 git-scicomp control transcripts, 2026-09-17)."""
+    that listed /shared read it (8 of 120 git-scicomp control transcripts)."""
     assert "caveman" not in (REPO / "experiments" / "materialize_shared.sh").read_text()

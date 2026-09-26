@@ -1,6 +1,6 @@
 # Copyright 2026 ETH Zurich and the HPCAgent-Bench authors.
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Regression gate for the canon-sweep hang incident (2026-09-18, jobs 640787-640802):
+"""Regression gate for the canon-sweep hang incident:
 nussinov and gem had no separate fuzz cap and no size problem of their own -- their XL preset was
 simply too big for the sequential (c-autopar) baseline ``measurement.baseline`` times. Since
 ``PRESET=fuzzed`` always anchors on XL (``fuzz.resolve_ranges``'s default, [0.50, 1.00] x XL per

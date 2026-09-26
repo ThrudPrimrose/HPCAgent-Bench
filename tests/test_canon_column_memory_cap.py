@@ -3,7 +3,7 @@
 """The per-kernel memory cap must bound the HEAP (RLIMIT_DATA), not the whole address space
 (RLIMIT_AS), or a GPU column crashes under it.
 
-2026-09-20: canon_column.sh gained a per-kernel memory cap (job 640519: pluto rank 2 OOM-killed at
+canon_column.sh gained a per-kernel memory cap (job 640519: pluto rank 2 OOM-killed at
 ~465 GB RSS under --mem=0's no-per-rank-reservation, taking every sibling rank's in-flight kernel
 down with it) via ``ulimit -v`` (RLIMIT_AS), applied unconditionally to every column including the
 GPU ones. A HIP process reserves its own VRAM aperture as address space at ``hipInit`` -- measured

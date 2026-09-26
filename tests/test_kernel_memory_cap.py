@@ -17,7 +17,7 @@ import pathlib
 import shutil
 import subprocess
 from collections.abc import Callable
-from typing import Dict, TypeVar
+from typing import TypeVar
 
 import numpy as np
 import pytest
@@ -173,7 +173,7 @@ def test_an_agents_container_gets_the_stack_the_judge_grades_with() -> None:
 FreshT = TypeVar("FreshT")
 
 
-def fresh_interpreter(fn: Callable[..., FreshT], *args: object) -> FreshT:
+def fresh_interpreter[FreshT](fn: Callable[..., FreshT], *args: object) -> FreshT:
     """``fn(*args)`` run from a newly spawned interpreter.
 
     libgomp reads ``OMP_STACKSIZE`` and ``OMP_THREAD_LIMIT`` once, when it is first loaded, and a
@@ -511,7 +511,7 @@ def hungry_on_value_kernel(tmp_path: pathlib.Path) -> pathlib.Path:
 def test_a_followups_build_and_host_copy_do_not_count_against_the_kernel_cap(tmp_path: pathlib.Path) -> None:
     """``followup.build()`` and ``call_with``'s host copy of it used to run under the KERNEL's
     armed ``RLIMIT_DATA`` -- the accounting bug that cost fdtd_2d and heat_3d every grade in
-    git-scicomp since 2026-09-12 (every recorded ``score_error`` traces to
+    git-scicomp (every recorded ``score_error`` traces to
     ``native_call.run_followup``: ``followup.build()`` calling ``Benchmark.get_data`` -> a
     ``np.fromfunction`` allocation, or ``call_with``'s ``np.array(src[...], copy=True)``, never
     the kernel itself). A followup whose OWN input is far larger than the kernel's tiny declared
@@ -524,7 +524,7 @@ def test_a_followups_build_and_host_copy_do_not_count_against_the_kernel_cap(tmp
     data = {"x": np.zeros(4, dtype=np.float64)}
     big = int(2 * (1 << 30)) // 8  # 2 GiB -- far over the 0.05 GB cap below
 
-    def build_big() -> Dict[str, np.ndarray]:
+    def build_big() -> dict[str, np.ndarray]:
         return {"x": np.ones(big, dtype=np.float64)}
 
     followups = [native_call.Followup(build=build_big)]
@@ -633,9 +633,9 @@ def test_a_crash_under_an_armed_cap_names_the_cap() -> None:
 # the manifest's own hard override (memory_cap_gb) -- see spec.py:BenchSpec.memory_cap_gb
 
 
-def _minimal_manifest(**extra: object) -> Dict[str, object]:
+def _minimal_manifest(**extra: object) -> dict[str, object]:
     """A hermetic one-array manifest (no numpy reference on disk needed) for ``from_dict``."""
-    manifest: Dict[str, object] = {
+    manifest: dict[str, object] = {
         "short_name": "memcaptest",
         "name": "memcaptest",
         "relative_path": "memcaptest",

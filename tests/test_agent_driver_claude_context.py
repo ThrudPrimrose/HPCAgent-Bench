@@ -9,7 +9,7 @@ so Qwen episodes grew to 230674 input tokens and died on the 400. agent_driver.c
 names the window (CLAUDE_CODE_MAX_CONTEXT_TOKENS, CLAUDE_CODE_AUTO_COMPACT_WINDOW) and places the
 trigger (CLAUDE_AUTOCOMPACT_PCT_OVERRIDE).
 
-USER 2026-09-22: the limit L is min(served window, 262144) for every model; the reply reserve R is
+the limit L is min(served window, 262144) for every model; the reply reserve R is
 min(CLAUDE_CODE_MAX_OUTPUT_TOKENS, L // 8) and is exported as the reply cap; the trigger leaves R plus
 one turn of growth, round(0.12 * L), under L -- ~198k at 256k, ~99k at 128k. The window comes from
 keys every arm snapshot ALREADY carries -- CONTEXT_LENGTH and the engine's --context-length /

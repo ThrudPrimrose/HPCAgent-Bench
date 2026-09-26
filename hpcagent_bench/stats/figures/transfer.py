@@ -113,7 +113,7 @@ CORRECT: str = "correct"
 FAILED: str = "failed"
 ERRORED: str = "error"
 NOT_PORTABLE: str = "not-portable"
-#: What counts as FAILED on GH200 (2026-09-25 user): unsolved, and every judge error too -- a
+#: What counts as FAILED on GH200 (user): unsolved, and every judge error too -- a
 #: numba config error, a failed dlopen, a SIGSEGV all left the answer without a grade there.
 FAILED_OUTCOMES: tuple[str, ...] = (FAILED, ERRORED)
 #: The MI300A speedup is the final grade, or the live grade where the answer has no final one.

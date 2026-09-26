@@ -288,13 +288,13 @@ def test_a_speedup_above_the_suspect_threshold_is_flagged_on_every_path(
 def test_the_largest_real_device_win_is_not_flagged(tmp_path: pathlib.Path) -> None:
     """The other half of the threshold: it has to leave the fastest REAL measurement alone.
 
-    3228x is bandwidth-consistent (4.2 GB at ~3 TB/s), so a threshold tuned low enough to flag it
-    would void every honest GPU arm -- the failure mode that makes a guard worse than none. S1
-    (2026-09-21) split the flat threshold into a host bound and a much looser device bound, so
-    this row -- "an MI300A HIP kernel" per its own docstring -- is graded as the device task it
-    actually is (``language="hip"``, which promotes ``residency`` to "device" the same way every
-    real GPU submission's task does): a plain "c" task would put it under the HOST bound instead,
-    which 3228x clears and this test would (wrongly) start failing."""
+       3228x is bandwidth-consistent (4.2 GB at ~3 TB/s), so a threshold tuned low enough to flag it
+       would void every honest GPU arm -- the failure mode that makes a guard worse than none. S1
+    split the flat threshold into a host bound and a much looser device bound, so
+       this row -- "an MI300A HIP kernel" per its own docstring -- is graded as the device task it
+       actually is (``language="hip"``, which promotes ``residency`` to "device" the same way every
+       real GPU submission's task does): a plain "c" task would put it under the HOST bound instead,
+       which 3228x clears and this test would (wrongly) start failing."""
     db = str(tmp_path / "r.db")
     table, detail = recording.record(
         _correct_score(**S255_REAL_DEVICE_WIN),
