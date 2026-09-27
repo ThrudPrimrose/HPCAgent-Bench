@@ -250,21 +250,63 @@ def test_a_submitted_arm_reads_a_snapshot_and_chains_its_finalize_grade(tmp_path
     assert any("--dependency=afterany:4242" in call and "finalize_grade.sbatch" in call for call in calls), calls
 
 
-def test_an_mi200_arm_takes_the_mi200_images_and_lands_on_that_partition(tmp_path: pathlib.Path) -> None:
-    root = tree(tmp_path)
-    done = submit(
-        root, KERNELS_FILE="subset.txt", PARTITION="mi200", EXPERIMENT="x-mi200", SUBMIT="1", SBATCH_ACCOUNT="p"
+def submit_mi200(root: pathlib.Path, model: str, **knobs: str) -> subprocess.CompletedProcess[str]:
+    """One ``model`` arm submitted to mi200 as experiment ``x-mi200``, unless overridden."""
+    return submit(
+        root,
+        **{
+            "KERNELS_FILE": "subset.txt",
+            "PARTITION": "mi200",
+            "EXPERIMENT": "x-mi200",
+            "MODELS": model,
+            "SUBMIT": "1",
+            "SBATCH_ACCOUNT": "p",
+            **knobs,
+        },
     )
-    assert done.returncode == 0, done.stderr
-    env = arm_env(root, "x-mi200-qwen38-c")
+
+
+def assert_on_mi200(root: pathlib.Path, env: dict[str, str]) -> None:
     assert env["HPCAGENT_BENCH_PARTITION"] == "mi200"
     assert env["AMD_CE_ENV"].endswith("-mi200-latest") and env["JUDGE_CE_ENV"].endswith("-mi200-latest")
     args = (root / "sbatch.args").read_text().splitlines()
     assert "--partition=mi200" in args and f"--gpus-per-node={env['GPUS_PER_NODE']}" in args
 
 
+def test_a_hosted_model_arm_lands_on_mi200_without_a_serving_layer(tmp_path: pathlib.Path) -> None:
+    """A model behind a provider API runs no engine on the node, so the partition layer alone moves it."""
+    root = tree(tmp_path)
+    done = submit_mi200(root, "fable51")
+    assert done.returncode == 0, done.stderr
+    env = arm_env(root, "x-mi200-fable51-c")
+    assert env["INFERENCE_SOURCE"] == "service"
+    assert_on_mi200(root, env)
+
+
+def test_a_served_model_arm_on_mi200_takes_its_serving_layer(tmp_path: pathlib.Path) -> None:
+    """A self-served model runs on mi200 through layers/partition-mi200-<model>.env, pinned over the
+    arm after the partition layer. No model ships one today, so the test writes the layer."""
+    root = tree(tmp_path)
+    layer = root / "experiments" / "layers" / "partition-mi200-qwen38.env"
+    layer.write_text("INFERENCE_CE_ENV=hpcagent-bench-sglang-mi200-bf16\nSGLANG_USE_AITER=0\n")
+    done = submit_mi200(root, "qwen38")
+    assert done.returncode == 0, done.stderr
+    env = arm_env(root, "x-mi200-qwen38-c")
+    assert env["INFERENCE_CE_ENV"] == "hpcagent-bench-sglang-mi200-bf16" and env["SGLANG_USE_AITER"] == "0"
+    assert_on_mi200(root, env)
+
+
+def test_a_served_model_with_no_mi200_serving_layer_is_refused(tmp_path: pathlib.Path) -> None:
+    """Without its layer a served model would launch its mi300 serving config on MI250X; refuse it."""
+    root = tree(tmp_path)
+    done = submit_mi200(root, "qwen38")
+    assert done.returncode == 2 and "qwen38 has no mi200 config" in done.stderr, done.stderr
+    assert not list((root / "experiments").glob(".env.*"))
+    assert not (root / "sbatch.calls").exists()
+
+
 def test_an_mi200_arm_needs_an_experiment_naming_mi200(tmp_path: pathlib.Path) -> None:
     root = tree(tmp_path)
-    done = submit(root, KERNELS_FILE="subset.txt", PARTITION="mi200")
-    assert done.returncode == 2 and "does not name mi200" in done.stderr
+    done = submit_mi200(root, "fable51", EXPERIMENT="wave", SUBMIT="0")
+    assert done.returncode == 2 and "does not name mi200" in done.stderr, done.stderr
     assert not list((root / "experiments").glob(".env.*"))

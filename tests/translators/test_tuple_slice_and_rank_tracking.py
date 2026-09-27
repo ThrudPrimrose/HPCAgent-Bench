@@ -20,6 +20,7 @@ after the loop the name holds one or the other and nothing here knows which.
 """
 
 import ast
+import dataclasses
 
 import pytest
 
@@ -27,19 +28,27 @@ from hpcagent_bench.translators.numpyto_common.numpy_desugar import rank_table
 from hpcagent_bench.translators.numpyto_common.tuple_desugar import Env, TupleDesugar, desugar_tuples
 
 
+@dataclasses.dataclass(frozen=True)
+class Folded:
+    """What one interpreter run leaves behind: its rank table and the rewritten function."""
+
+    ranks: dict[str, int]
+    source: str
+
+
 def fold(
     src: str, ranks: dict, int_scalars: frozenset[str] = frozenset(), arrays: frozenset[str] = frozenset()
-) -> TupleDesugar:
-    """Run the interpreter over ``src``'s single function and return it, for its rank table."""
+) -> Folded:
+    """Run the interpreter over ``src``'s single function; ``TupleDesugar`` is slotted, so the folded
+    function travels beside it rather than on it."""
     fn = ast.parse(src).body[0]
     interp = TupleDesugar(int_scalars, frozenset(), arrays, ranks)
     fn.body = interp.run(fn.body, Env(bound=set(int_scalars) | set(arrays)), linear=True)
-    interp.folded = fn
-    return interp
+    return Folded(interp.ranks, ast.unparse(fn))
 
 
-def source_of(interp: TupleDesugar) -> str:
-    return ast.unparse(interp.folded)
+def source_of(folded: Folded) -> str:
+    return folded.source
 
 
 def test_an_allocation_sized_by_a_scalar_expression_is_one_dimensional() -> None:
