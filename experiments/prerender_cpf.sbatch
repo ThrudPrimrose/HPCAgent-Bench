@@ -24,9 +24,7 @@
 #   VIEW=<dir> TAG=llr-focus40 TARGET=gpu sbatch prerender_cpf.sbatch
 #   VIEW=<dir> TAG=llr-focus40 CPF_POOL=1 sbatch prerender_cpf.sbatch   # one rank, per-core kernel pool
 #
-# dace is the image's /opt/dace, moved to HPCAGENT_BENCH_DACE_REF (default: the release pin,
-# like the judge) by containers/images/dace_refresh.sh. Every key holds the dace HEAD commit, and a
-# commit that moves during the run withdraws what the run rendered. OPT may name a frozen snapshot.
+# dace is the image's /opt/dace, the release pin (scripts/dace_pin.sh); every key holds that commit. OPT may name a frozen snapshot.
 #
 # CONTAINER, NOT HOST: nothing runs outside a container. The render step runs INSIDE the agent
 # image, which carries a toolchain (/opt/gcc, /opt/view, its own spack install) -- this script stays
@@ -56,8 +54,6 @@ if [[ "${1:-}" == inner || "${1:-}" == inner-pool ]]; then
     shift
     CACHE=${1:?inner: cache}; VIEW_ARG=${2:?inner: view}; KERNELS_ARG=${3:?inner: kernels}
     TARGET_ARG=${4:?inner: target}; OPT_ARG=${5:?inner: opt}; WORKERS_ARG=${6:-1}
-    # The image's own dace at the job's commit (HPCAGENT_BENCH_DACE_REF).
-    "${OPT_ARG}/containers/images/dace_refresh.sh" || { echo "prerender: dace refresh failed" >&2; exit 1; }
     # The image's spack view exports OPENBLAS_ROOT (its own name for the view dace-env.sh used to
     # call OPENBLAS_DIR); mapped here rather than hardcoding /opt/view, so an image that renames or
     # relocates its view still satisfies hpcagent_bench.cpf_prerender.require_toolchain() unchanged.
@@ -76,10 +72,6 @@ fi
 
 # --- outer: the batch host, never inside a container -------------------------------------------
 OPT=${OPT:-${HPCAGENT_BENCH_REPO:?set OPT or HPCAGENT_BENCH_REPO to the checkout}}
-# One dace commit for every rank: each rank refreshes its own container, so the branch is resolved
-# to a sha once, here.
-HPCAGENT_BENCH_DACE_REF="$("${OPT}/containers/images/dace_refresh.sh" --resolve)"
-export HPCAGENT_BENCH_DACE_REF
 # scripts/cache_env.sh is the one place HPCAGENT_BENCH_CPF_PRERENDER_DIR is defined, so the cache
 # lands under the root submit.sh's CPF_VIEW default points into.
 . "${OPT}/scripts/cache_env.sh"
@@ -129,7 +121,7 @@ fi
 echo "prerender ${TARGET}: ${#ordered[@]} kernels, ${ranks} ranks x ${cores} cores, ${inner_mode} x ${workers}"
 echo "  cache ${CPF_CACHE}"
 echo "  view  ${VIEW}"
-echo "  dace  the image's, at ${HPCAGENT_BENCH_DACE_REF}"
+echo "  dace  the image's, at $("${OPT}/scripts/dace_pin.sh")"
 
 CPF_CE_ENV=${CPF_CE_ENV:-hpcagent-bench-agent-mi300-latest}
 SELF="$(self_path)"

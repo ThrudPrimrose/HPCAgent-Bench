@@ -6,7 +6,7 @@
 #   containers/images/judge-agent-cuda/build.sh
 #   BUILD_TARGETS=agent OUTPUT_SQSH=$SCRATCH/ce-images/x.sqsh .../build.sh
 #
-# Overrides: BUILD_TARGETS, OUTPUT_SQSH (single target only), BASE_IMAGE, HPCAGENT_BENCH_DACE_REF,
+# Overrides: BUILD_TARGETS, OUTPUT_SQSH (single target only), BASE_IMAGE,
 # LIBFABRIC_REF, SLURM_VERSION, SPACK_BUILDCACHE, SPACK_BUILD_JOBS, PIP_CACHE, CE_IMAGES, CE_BUILD_CACHE, CE_PULL.
 set -euo pipefail
 
@@ -48,9 +48,8 @@ printf 'slurm %s\n' "${SLURM_VERSION}"
 
 ce_podman_env
 
-# The release's dace pin (pyproject.toml dace-pin); HPCAGENT_BENCH_DACE_REF=extended bakes the tip.
-DACE_COMMIT="$(HPCAGENT_BENCH_DACE_REF="${HPCAGENT_BENCH_DACE_REF:-pinned}" \
-    "${SCRIPT_DIR}/../dace_refresh.sh" --resolve)"
+# The release's dace pin (pyproject.toml dace-pin), which every job runs as baked.
+DACE_COMMIT="$("${SCRIPT_DIR}/../../../scripts/dace_pin.sh")"
 [[ "${DACE_COMMIT}" =~ ^[0-9a-f]{40}$ ]] || { echo "could not resolve spcl/dace@${DACE_COMMIT}" >&2; exit 2; }
 printf 'dace @ %s\n' "${DACE_COMMIT}"
 

@@ -31,8 +31,7 @@ cores_per_socket() {
 #: there and the step exits 127 before it runs a single kernel.
 SELF="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/$(basename -- "${BASH_SOURCE[0]}")"
 
-#: DaCe: the image's own /opt/dace, moved to HPCAGENT_BENCH_DACE_REF (default: the release's pin,
-#: pyproject.toml dace-pin) by containers/images/dace_refresh.sh when `inner` starts.
+#: DaCe: the image's own /opt/dace, the release's pin (pyproject.toml dace-pin).
 
 mode=${1:?outer|inner}
 #: `outer` takes a COMMA-SEPARATED list and runs the columns one after another in one allocation.
@@ -116,10 +115,6 @@ rotate_stale_shards() {
 
 if [[ "${mode}" == outer ]]; then
     . "${opt}/experiments/env.sh"
-    #: One dace commit for every rank: each rank refreshes its own container, so the branch is
-    #: resolved to a sha once, here.
-    HPCAGENT_BENCH_DACE_REF="$("${opt}/containers/images/dace_refresh.sh" --resolve)" || exit 2
-    export HPCAGENT_BENCH_DACE_REF
     cpt="$(cores_per_socket)"
     if [[ ! "${cpt}" =~ ^[1-9][0-9]*$ ]]; then
         echo "canon_column: could not detect cores per socket and HPCAGENT_BENCH_NCORES is unset" >&2
@@ -199,8 +194,6 @@ if [[ -n "${mine}" ]]; then
         mkdir -p "${db_dir}"
         export HPCAGENT_BENCH_RECORD_DB_PATH="${db_dir}/hpcagent_bench.db"
     fi
-    #: The column runs the image's /opt/dace, refreshed to the job's commit.
-    "${opt}/containers/images/dace_refresh.sh" || { echo "canon ${col} rank ${rank}: dace refresh failed" >&2; exit 1; }
     dace_dir="${DACE_DIR:-/opt/dace}"
     export OMPI_MCA_pml=ob1 OMPI_MCA_btl=self,vader,tcp PMIX_MCA_gds=hash
     export UCX_VFS_ENABLE=n HWLOC_COMPONENTS=-gl MPI4PY_RC_INITIALIZE=0

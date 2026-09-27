@@ -146,7 +146,6 @@
  "tests/test_dace_gpu_residency.py": 2,
  "tests/test_dace_openblas_link.py": 2,
  "tests/test_dace_per_rank_build.py": 21,
- "tests/test_dace_refresh.py": 1,
  "tests/test_db_aggregate.py": 19,
  "tests/test_declared_dtype_is_realised.py": 2,
  "tests/test_default_datatype_tolerance.py": 3,

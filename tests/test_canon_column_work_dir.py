@@ -269,9 +269,9 @@ def test_a_column_stamps_the_dace_commit_into_record_build(tmp_path: pathlib.Pat
 
     assert result.returncode == 0, f"stdout={result.stdout!r} stderr={result.stderr!r}"
     # The stand-in dace checkout (_base_env) is at its pinned commit.
-    assert (
-        out_root / "fakecol.rank0.csv.record_build"
-    ).read_text().strip() == f"dace {env['HPCAGENT_BENCH_DACE_REF'][:7]}"
+    assert (out_root / "fakecol.rank0.csv.record_build").read_text().strip() == "dace " + subprocess.run(
+        ["git", "-C", env["DACE_DIR"], "rev-parse", "--short=7", "HEAD"], capture_output=True, text=True, check=True
+    ).stdout.strip()
 
 
 def test_a_caller_supplied_record_build_is_left_alone(tmp_path: pathlib.Path) -> None:

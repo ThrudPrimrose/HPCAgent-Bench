@@ -439,9 +439,7 @@ def grading_plan(keep: Sequence[str], *, devices: bool = True) -> SealPlan | Non
     the secret seeds; a numba reference copied there is ``keep``-bound back by its own child),
     ``grading.seal_hide``. Read-only: the shared
     mount, the package's parent tree, the interpreter prefix, and ``/opt`` (present only on the
-    judge image -- the toolchain gcc/dace/ROCm live there, and ``dace_refresh.sh`` writes
-    ``/opt/dace`` as the job user at job START, before any grade runs, so making it read-only here
-    costs that script nothing), so agent code cannot plant files for the agent or rewrite the
+    judge image -- the toolchain gcc/dace/ROCm live there), so agent code cannot plant files for the agent or rewrite the
     judge's own compiler.
 
     ``devices`` False (a HOST grade) also hides :func:`device_nodes`, so the child can reach NO

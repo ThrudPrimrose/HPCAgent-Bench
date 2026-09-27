@@ -1622,15 +1622,10 @@ def test_the_untimed_canonical_call_still_fails_an_incorrect_kernel(tmp_path: pa
     assert (task["s_i"], task["s_bar"]) == (1.0, None)
 
 
-#: A dace commit for the regrade job tests: a sha resolves without asking the network.
-DACE_SHA = "0123456789abcdef0123456789abcdef01234567"
-
-
 def add_job_scripts(repo: pathlib.Path) -> None:
-    """The scripts regrade.sbatch runs from the tree it grades with: the dace refresh and the
-    experiments/env.sh layer that resolves the host interpreter."""
+    """The scripts regrade.sbatch runs from the tree it grades with: the experiments/env.sh layer
+    that resolves the host interpreter."""
     for rel in (
-        "containers/images/dace_refresh.sh",
         "experiments/env.sh",
         "scripts/cache_env.sh",
         "scripts/host_python.sh",
@@ -1665,7 +1660,6 @@ def test_the_regrade_job_compiles_the_tree_with_the_hosts_python311(tmp_path: pa
         "SLURM_JOB_ID": "1",
         "SLURM_SUBMIT_DIR": str(repo),
         "STUB_SRUN": str(tmp_path / "srun-ran"),
-        "HPCAGENT_BENCH_DACE_REF": DACE_SHA,
         "HPCAGENT_BENCH_HOST_PYTHON": sys.executable,  # the site layer's host interpreter
     }
     script = REPO / "experiments" / "regrade.sbatch"
@@ -1731,7 +1725,6 @@ def test_the_regrade_job_grades_from_a_snapshot_of_one_commit_and_removes_it(tmp
         "SLURM_JOB_ID": "7",
         "SLURM_SUBMIT_DIR": str(repo),
         "STUB_SRUN": str(tmp_path / "srun-args"),
-        "HPCAGENT_BENCH_DACE_REF": DACE_SHA,
         "HPCAGENT_BENCH_HOST_PYTHON": sys.executable,
         **git_env,
     }
@@ -1746,8 +1739,6 @@ def test_the_regrade_job_grades_from_a_snapshot_of_one_commit_and_removes_it(tmp
     frozen = scratch / "hpcagent-bench-runs" / ".frozen" / "regrade-7"
     args = (tmp_path / "srun-args").read_text().splitlines()
     assert args[-6:] == [str(frozen), str(worklist), str(tmp_path / "out"), "run", str(scratch), head], args
-    # every rank's container refreshes dace to the ONE commit the batch host resolved
-    assert f"HPCAGENT_BENCH_DACE_REF={DACE_SHA}" in args, args
     assert f"frozen tree {frozen} from {repo} at {head}" in done.stdout, done.stdout
     assert not frozen.exists()
 

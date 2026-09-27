@@ -536,12 +536,7 @@ run_judge_node() {
     # Slot on THIS node. SLURM_LOCALID is 0..JUDGES_PER_NODE-1 per node, which is what selects the
     # port pair and the GPU; SLURM_PROCID is the global rank, which is the judge's identity.
     local judge_slot="${SLURM_LOCALID:-0}"
-    # dace at HPCAGENT_BENCH_DACE_REF (the release pin by default) at job start. The node's judges
-    # share one container, hence the lock. Never fatal: the baked commit is a working dace. The
-    # last line is the run's dace provenance.
-    flock /opt/dace.commit timeout 900 "${SCRIPT_DIR}/../containers/images/dace_refresh.sh" ||
-        echo "dace-refresh failed; staying on the baked commit"
-    echo "judge ${SLURM_PROCID:-0}: dace live commit $(git -C /opt/dace rev-parse HEAD 2>/dev/null)"
+    echo "judge ${SLURM_PROCID:-0}: dace $(cat /opt/dace.commit 2>/dev/null)"
     JUDGE_PORT="$(judge_router_port "${judge_slot}")"
     JUDGE_UPSTREAM_PORT="$(judge_upstream_port "${judge_slot}")"
     # The node's GPUs SPLIT between its judges: that count is the judge's device-slot pool (grades

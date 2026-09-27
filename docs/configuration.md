@@ -135,25 +135,15 @@ direct-URL requirements) and `pyproject.toml` names no version of it.
 | Variable | Default | Controls |
 |---|---|---|
 | `dace-pin` (`pyproject.toml`, `[tool.hpcagent-bench]`) | the one place it is written | the extended commit a release is tested with |
-| `HPCAGENT_BENCH_DACE_REF` | `pinned` | which dace: `pinned` (the pin), a branch (its tip) or a full 40-character commit sha |
-| `DACE_DIR` | `/opt/dace` | the image's editable dace checkout that `dace_refresh.sh` moves |
 
 - **Install**: `scripts/install_dace.sh` installs the pin (`pip install "dace @
   git+https://github.com/spcl/dace.git@<pin>"`; `--editable DIR` for a checkout). README,
   CONTRIBUTING, CI, `scripts/rebuild_venv.sh` and the release smoke all use it, and the judge/agent
   image builds bake the pin, so a release install is reproducible.
-- **Every job**: `containers/images/dace_refresh.sh` moves the image's `/opt/dace` to
-  `HPCAGENT_BENCH_DACE_REF` before anything imports dace: the pin by default, so a failure
-  reproduces from run to run; `HPCAGENT_BENCH_DACE_REF=extended` tries the latest extended. A job that spans several containers
-  resolves the ref to one sha on the batch host first (`dace_refresh.sh --resolve`), so every rank
-  runs the same commit. A branch that cannot be fetched keeps the baked commit; a commit that
-  cannot be reached fails the job. Bare metal (no `/opt/dace` checkout) runs the installed dace.
-- **Provenance**: the refresh prints `dace-refresh: live commit <sha>` into the job log and writes
-  `/opt/dace.commit`; canon columns stamp `dace <sha>` into `record.build` and `canon.db`'s `build`
-  column; CPF prerender keys carry the dace commit.
-
-To try the latest extended: `HPCAGENT_BENCH_DACE_REF=extended sbatch ...`. Move the pin (one line in
-`pyproject.toml`) only to an extended commit whose CI is green.
+- **Every job** runs the image's dace as baked. Another dace means another image: move the pin
+  (one line in `pyproject.toml`, only to an extended commit whose CI is green) and rebuild.
+- **Provenance**: the image records its commit in `/opt/dace.commit`, which the judge prints into
+  the job log; canon columns stamp `dace <sha>` into `record.build` and `canon.db`'s `build` column.
 
 ### Submitting nicely
 

@@ -257,8 +257,8 @@ cpf_check() {  # cpf_check <view> <mode> <language> [check flags...]
 cpf_form_gate() {  # cpf_form_gate <view> <language>
     local plan rc=0 dace_commit
     [[ -n "${HPCAGENT_BENCH_CPF_CACHE:-}" ]] || . "${REPO}/scripts/cache_env.sh"
-    # The commit the judge moves its dace to at start (run_judge_node), which pins every render.
-    dace_commit="$("${REPO}/containers/images/dace_refresh.sh" --resolve)"
+    # The image's dace, the release pin, which pins every render.
+    dace_commit="$("${REPO}/scripts/dace_pin.sh")"
     plan="$(cpf_check "$1" form "$2" --on-demand --cache "${HPCAGENT_BENCH_CPF_CACHE}" --dace-commit "${dace_commit}")" \
         || rc=$?
     if (( rc != 0 )); then
