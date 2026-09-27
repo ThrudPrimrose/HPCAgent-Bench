@@ -2243,7 +2243,7 @@ def test_an_inlined_einsum_takes_the_result_dtype_of_all_its_operands() -> None:
     fft_program = desugar_for_python_backend(fft_src, kir, backend="dace")
     assert "vcb.dtype)" in fft_program, fft_program
     # An operand of unknown kind may be the complex one, so a known real operand never decides.
-    del kir.arrays[1].dtype
+    kir.arrays[1].dtype = None
     unknown = desugar_for_python_backend(src, kir, backend="dace")
     assert "qr.dtype)" in unknown, unknown
 
