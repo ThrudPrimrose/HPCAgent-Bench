@@ -250,21 +250,43 @@ def test_a_submitted_arm_reads_a_snapshot_and_chains_its_finalize_grade(tmp_path
     assert any("--dependency=afterany:4242" in call and "finalize_grade.sbatch" in call for call in calls), calls
 
 
-def test_an_mi200_arm_takes_the_mi200_images_and_lands_on_that_partition(tmp_path: pathlib.Path) -> None:
+def test_a_hosted_mi200_arm_takes_the_mi200_images_and_lands_on_that_partition(tmp_path: pathlib.Path) -> None:
     root = tree(tmp_path)
     done = submit(
-        root, KERNELS_FILE="subset.txt", PARTITION="mi200", EXPERIMENT="x-mi200", SUBMIT="1", SBATCH_ACCOUNT="p"
+        root,
+        MODELS="fable51",
+        KERNELS_FILE="subset.txt",
+        PARTITION="mi200",
+        EXPERIMENT="x-mi200",
+        SUBMIT="1",
+        SBATCH_ACCOUNT="p",
     )
     assert done.returncode == 0, done.stderr
-    env = arm_env(root, "x-mi200-qwen38-c")
+    env = arm_env(root, "x-mi200-fable51-c")
     assert env["HPCAGENT_BENCH_PARTITION"] == "mi200"
     assert env["AMD_CE_ENV"].endswith("-mi200-latest") and env["JUDGE_CE_ENV"].endswith("-mi200-latest")
     args = (root / "sbatch.args").read_text().splitlines()
     assert "--partition=mi200" in args and f"--gpus-per-node={env['GPUS_PER_NODE']}" in args
 
 
+def test_a_served_mi200_arm_takes_its_model_layer(tmp_path: pathlib.Path) -> None:
+    root = tree(tmp_path)
+    (root / "experiments" / "layers" / "partition-mi200-qwen38.env").write_text("VLLM_PORT=8123\n")
+    done = submit(root, KERNELS_FILE="subset.txt", PARTITION="mi200", EXPERIMENT="x-mi200")
+    assert done.returncode == 0, done.stderr
+    env = arm_env(root, "x-mi200-qwen38-c")
+    assert env["VLLM_PORT"] == "8123" and env["INFERENCE_CE_ENV"].endswith("-mi200-latest")
+
+
+def test_a_served_mi200_arm_without_a_model_layer_is_refused(tmp_path: pathlib.Path) -> None:
+    root = tree(tmp_path)
+    done = submit(root, KERNELS_FILE="subset.txt", PARTITION="mi200", EXPERIMENT="x-mi200")
+    assert done.returncode == 2 and "qwen38 has no mi200 config" in done.stderr
+    assert not list((root / "experiments").glob(".env.*"))
+
+
 def test_an_mi200_arm_needs_an_experiment_naming_mi200(tmp_path: pathlib.Path) -> None:
     root = tree(tmp_path)
-    done = submit(root, KERNELS_FILE="subset.txt", PARTITION="mi200")
+    done = submit(root, MODELS="fable51", KERNELS_FILE="subset.txt", PARTITION="mi200")
     assert done.returncode == 2 and "does not name mi200" in done.stderr
     assert not list((root / "experiments").glob(".env.*"))
