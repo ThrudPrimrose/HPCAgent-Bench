@@ -241,7 +241,7 @@ def test_parse_einsum_ellipsis_unsupported() -> None:
 
 def kir_(kernel_name: str, **arrays: tuple[str, ...]) -> SimpleNamespace:
     """Minimal KernelIR stand-in: name + (name -> shape-tuple) arrays."""
-    arrs = [SimpleNamespace(name=n, shape=s) for n, s in arrays.items()]
+    arrs = [SimpleNamespace(name=n, shape=s, dtype=None) for n, s in arrays.items()]
     return SimpleNamespace(kernel_name=kernel_name, arrays=arrs)
 
 
