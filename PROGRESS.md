@@ -24,12 +24,12 @@ Running log of the unbloat/unslop/registry work on `release-v0.1`. Deleted befor
 | 1 | `1ae90de` | Merged CI fixes: translator test stand-ins carry `dtype=None`; gemm score accepts the c-autopar fallback. |
 | 2 | `eedbe2b` | mi200 arms: a hosted model needs only `partition-mi200.env`; a served model needs its own `partition-mi200-<model>.env`. GCC >= 15 toolchain gate. |
 | 3 | `9121285` | Dead code found by vulture removed (~90 lines). Most vulture hits were false positives (kernel entry points loaded by name, FastAPI routes, http.server overrides, CLI enum choices, TYPE_CHECKING imports). |
+| 4 | `1fddcc1` | Docs: one owner per topic. Merged and deleted `perf_protocol`, `job_submission`, `owed_and_checkpointing`, `AMD-SUBMISSION`, `docs/README`, `local_coding_agents`. README 286->169, CONTRIBUTING 325->146 lines; mi200 serving docs removed; stale `.env.base-*`, sbatch and script references fixed; 0 broken links (was 5). Markdown 10,474 -> 8,911 lines. |
 
 ## In progress
 
 | Workstream | Scope | Status |
 |---|---|---|
-| Docs | One owner per topic; merge perf_protocol, job_submission, owed_and_checkpointing, AMD-SUBMISSION; delete local_coding_agents; fix ~20 stale references; drop mi200-serving docs; ~7.9k -> ~5.2k lines | running |
 | Registries | `registry.py`; `@framework` replacing FRAMEWORK_META + ~8 hand-kept name lists; `@harness` (listed in 4 places today); `@syntax_check` / `@tool` in the agent image; registry.yaml pruning | running |
 | Kernels | Manifest key audit (drop unread keys from 702 yaml); `@kernel` read statically, interchangeable with yaml | running |
 | Anti-cheat | `hpcagent_bench/anticheat/`: `@anticheat(name, stage, action)` one file per measure, autoloaded; the paper's guards (input cycling, two secret seeds + image check, speedup-only score tool, device isolation, plausibility/roofline bounds, static source check, sandbox, portability probe) moved behind it; launch records the active set; `hpcagent-bench anticheat list` | running |
@@ -45,4 +45,4 @@ Running log of the unbloat/unslop/registry work on `release-v0.1`. Deleted befor
    `experiments` (drops `sys.path` hacks).
 4. Config knobs: every `HPCAGENT_BENCH_*` read through `config`, prune single-use knobs, one kernel timeout;
    `run_cluster.sh` topology/port math into Python.
-5. Comment and docstring trimming in the heaviest files.
+5. Comment and docstring trimming in the heaviest files; stale script references left in source (`finalize_grade_owed.py` account_env.sh, `remaining_kernels.py` submit-llrblind.sh, `install_dace.sh` rebuild_venv.sh, `judge_web_search.py --env-file` help).
