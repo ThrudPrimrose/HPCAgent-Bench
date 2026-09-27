@@ -17,13 +17,7 @@ source "${SCRIPT_DIR}/../build_common.sh"
 
 IMAGE_TAG="${IMAGE_TAG:-hpcagent-bench-sglang:latest}"
 OUTPUT_SQSH="${OUTPUT_SQSH:-${CE_IMAGES:?set SCRATCH or CE_IMAGES}/hpcagent-bench-sglang.sqsh}"
-# Pinned by DIGEST. The date stamp in the tag looks immutable and is not.
-BASE_REPO="docker.io/lmsysorg/sglang-rocm:v0.5.19-rocm724-mi30x-20260908"
-BASE_DIGEST="sha256:0405baaf36945fa8164c57d4f1b6b178bae5804fae606ff2db3816a6cab6dafc"
-BASE_IMAGE="${BASE_IMAGE:-${BASE_REPO}@${BASE_DIGEST}}"
-# This value MUST track the Dockerfile's ARG BASE_IMAGE default: passing it here OVERRIDES that
-# default, so a stale line at this spot silently builds the wrong base while the Dockerfile reads
-# correct.
+BASE_IMAGE="${BASE_IMAGE:-$(ce_dockerfile_base "${SCRIPT_DIR}/Dockerfile")}"
 
 mkdir -p "$(dirname "${OUTPUT_SQSH}")"
 

@@ -22,8 +22,8 @@
 # number taken on 7.2.0 / 2.9.1 / aiter 0.1.19 is not comparable with one from this image.
 #
 # Pinned by DIGEST because a date-stamped tag is still a tag.
-ARG BASE_IMAGE=docker.io/lmsysorg/sglang-rocm:v0.5.19-rocm724-mi30x-20260908\
-@sha256:0405baaf36945fa8164c57d4f1b6b178bae5804fae606ff2db3816a6cab6dafc
+ARG BASE_IMAGE=docker.io/lmsysorg/sglang-rocm:v0.5.20-rocm724-mi30x-20260926\
+@sha256:a964345c1089a9bbabc0894e6c4ebfddb6c80a695b6bb4c904f4c680db953c80
 
 # ------------------------------------------------------------------------------------------------
 # One stage. This image builds NO fabric software at all -- no libfabric, no libcxi, no RCCL net
@@ -53,7 +53,7 @@ ARG BASE_IMAGE
 ARG BASE_IMAGE_REF="${BASE_IMAGE}"
 LABEL org.opencontainers.image.title="hpcagent-bench-sglang" \
       org.opencontainers.image.description="SGLang inference for MI300A: ROCm 7.2.4, CSCS netstack fabric, pinned flydsl" \
-      org.opencontainers.image.version="0.5.19" \
+      org.opencontainers.image.version="0.5.20" \
       org.opencontainers.image.source="https://github.com/spcl/HPCAgent-Bench" \
       org.opencontainers.image.licenses="GPL-3.0-or-later" \
       org.opencontainers.image.base.name="${BASE_IMAGE_REF}"
@@ -333,48 +333,6 @@ RUN set -eux; \
 
 # GLM-5.3 and every other GlmMoeDsa/DeepSeek fp8 checkpoint, fixed IN THE PACKAGE.
 #
-# sglang's DeepSeek weight loader reads `weight_scale.format_ue8m0` as a plain attribute. fp8.py
-# stamps that attribute onto a scale tensor, but on gfx942 the fp8-fnuz branch runs
-# normalize_e4m3fn_to_e4m3fnuz first, which returns a FRESH tensor carrying no such attribute, so
-# the loader raises AttributeError before the model is up. The branch is AMD-only, which is why it
-# ships broken; 0.5.19 carries it.
-#
-# The fix is the guard the SAME TREE already uses in fp8_utils.py, and False is correct rather than
-# merely safe: the branch it guards leads to should_deepgemm_weight_requant_ue8m0, and deepgemm is
-# NVIDIA-only, so the block is dead on this hardware.
-#
-# In the source, not monkeypatched onto torch.Tensor by a host sitecustomize on PYTHONPATH: a host
-# path is invisible to the image digest, and the per-role mount policy does not carry it into the
-# inference container. The build FAILS when the pattern is absent, so a release that fixes this
-# upstream is reported here instead of being patched twice.
-RUN /opt/venv/bin/python3 <<'PY'
-import pathlib
-import re
-import sys
-
-# A READ of .format_ue8m0. An assignment target (a single = that is not ==) is left alone: fp8.py
-# stamps the attribute all over and rewriting those would not parse.
-# The receiver may be a dotted CHAIN (layer.weight_scale.format_ue8m0), not just a bare name. A
-# pattern that excludes a leading dot misses those, and because the assertion below reuses it, such
-# a read would slip through while the build still reported success.
-PATTERN = re.compile(r"(?<![\w.])((?:\w+\.)*\w+)\.format_ue8m0\b(?!\s*=(?!=))")
-GUARD = r'getattr(\1, "format_ue8m0", False)'
-
-tree = pathlib.Path("/sgl-workspace/sglang/python/sglang")
-patched = []
-for path in sorted(tree.rglob("*.py")):
-    text = path.read_text()
-    fixed = PATTERN.sub(GUARD, text)
-    if fixed != text:
-        path.write_text(fixed)
-        patched.append(f"{path.relative_to(tree)}: {len(PATTERN.findall(text))}")
-if not patched:
-    sys.exit("no unguarded .format_ue8m0 read found; upstream may have fixed it -- drop this step")
-print("format_ue8m0 guarded in:", *patched, sep="\n  ", flush=True)
-for path in tree.rglob("*.py"):
-    assert not PATTERN.search(path.read_text()), path
-PY
-
 # The aiter kernel fused_qk_norm_rope_cache_quant.cu does static_cast<float>(__half) while the
 # PyTorch extension build defines -D__HIP_NO_HALF_CONVERSIONS__ / -D__HIP_NO_HALF_OPERATORS__,
 # which remove __half's conversion and arithmetic operators. hipcc APPENDS this and a later -U

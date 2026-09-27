@@ -191,6 +191,12 @@ ce_amd_candidate() {
 # Caches the base image on scratch as a `dir:` tree (plain files; the podman layer store cannot live
 # on scratch, which rejects user xattrs) and rewrites BASE_IMAGE to it on a hit. A miss pulls and
 # copies out through a staging dir, so racing builds never leave a half-written cache entry.
+# ce_dockerfile_base <Dockerfile>: the Dockerfile's own `ARG BASE_IMAGE=` default (a tag@digest that may
+# continue on the next line), so a build script never restates it.
+ce_dockerfile_base() {
+    sed -n '/^ARG BASE_IMAGE=/{N;s/^ARG BASE_IMAGE=//;s/\\\n//;s/\n.*//;p}' "$1"
+}
+
 ce_cache_base_image() {
     BASE_CACHE="${BASE_CACHE:-${SCRATCH:?}/base-images}"
     # The registry reference for the image label, kept before BASE_IMAGE becomes a local path.

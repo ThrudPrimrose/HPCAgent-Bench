@@ -17,13 +17,7 @@ source "${SCRIPT_DIR}/../build_common.sh"
 
 IMAGE_TAG="${IMAGE_TAG:-hpcagent-bench-vllm:latest}"
 OUTPUT_SQSH="${OUTPUT_SQSH:-${CE_IMAGES:?set SCRATCH or CE_IMAGES}/hpcagent-bench-vllm.sqsh}"
-# Pinned by DIGEST, not by tag. rocm/pytorch has no 7.2.0-suffixed tag at all -- the 7.2.0 release
-# is published unsuffixed as rocm7.2_* -- and an unsuffixed tag is a mutable name.
-BASE_REPO="docker.io/rocm/pytorch:rocm7.2_ubuntu24.04_py3.12_pytorch_release_2.9.1"
-BASE_DIGEST="sha256:a3b65813621095e3389269417e963725b59310184588c9d2490d44e6e83fa01c"
-BASE_IMAGE="${BASE_IMAGE:-${BASE_REPO}@${BASE_DIGEST}}"
-# This MUST track the Dockerfile's ARG BASE_IMAGE default: passing it here OVERRIDES that default,
-# so a stale line here builds a base the Dockerfile does not name.
+BASE_IMAGE="${BASE_IMAGE:-$(ce_dockerfile_base "${SCRIPT_DIR}/Dockerfile")}"
 
 mkdir -p "$(dirname "${OUTPUT_SQSH}")"
 

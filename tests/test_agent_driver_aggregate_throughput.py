@@ -35,7 +35,7 @@ EXAMPLE = pathlib.Path(__file__).resolve().parents[1] / "experiments"
 # would keep passing after a typo renamed the name and its use at once. The first four are the
 # engine-neutral keys every sample row is written under; the two maps are the series each engine
 # actually publishes for them (vLLM's as its arms' expositions carry them, SGLang's from
-# sglang/srt/observability/metrics_collector.py of the served 0.5.19 build).
+# sglang/srt/observability/metrics_collector.py of the served build).
 GENERATION = "generation_tokens_total"
 PROMPT = "prompt_tokens_total"
 RUNNING = "num_requests_running"

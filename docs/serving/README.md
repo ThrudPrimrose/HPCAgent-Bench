@@ -64,7 +64,7 @@ plugin, multi-node RCCL silently falls back to TCP.
 
 | EDF | Engine | Models | Rendered by `install_edfs.sh` |
 |---|---|---|---|
-| `hpcagent-bench-sglang-mi300-latest` | SGLang 0.5.19 | Qwen3.8, Kimi K2.7 | yes |
+| `hpcagent-bench-sglang-mi300-latest` | SGLang 0.5.20 | Qwen3.8, Kimi K2.7 | yes |
 | `hpcagent-bench-vllm-mi300-latest` | vLLM 0.23.0 | gpt-oss-120b | yes |
 | `sglang-candidate` | SGLang | GLM-5.3 only | **no**; needs a rebuilt image, see [`glm53.md`](glm53.md) |
 
