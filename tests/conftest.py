@@ -185,13 +185,7 @@ def named_groups(markexpr: str) -> frozenset[str]:
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
-    """Deselect every hardware test whose group the ``-m`` expression does not name, and skip every
-    ``site`` test unless HPCAGENT_BENCH_SITE_TESTS=1."""
-    if os.environ.get("HPCAGENT_BENCH_SITE_TESTS") != "1":
-        off_site = pytest.mark.skip(reason="site: HPCAGENT_BENCH_SITE_TESTS is not 1")
-        for item in items:
-            if item.get_closest_marker("site") is not None:
-                item.add_marker(off_site)
+    """Deselect every hardware test whose group the ``-m`` expression does not name."""
     named = named_groups(str(config.getoption("markexpr") or ""))
     dropped = [
         item
@@ -225,11 +219,6 @@ def pytest_runtest_setup(item: pytest.Item) -> None:
 
 
 def pytest_configure(config: pytest.Config) -> None:
-    config.addinivalue_line(
-        "markers",
-        "site: needs the cluster's own login node (its registered EDFs, Slurm); runs only with "
-        "HPCAGENT_BENCH_SITE_TESTS=1 (set by the site layer, docs/configuration.md).",
-    )
     for group, hardware in HARDWARE_GROUPS.items():
         config.addinivalue_line(
             "markers",
@@ -274,12 +263,6 @@ def pytest_configure(config: pytest.Config) -> None:
         "njit_oracle: compiles and RUNS every kernel's numpy reference beside its interpreted "
         "self, which is where numpy-vs-numba oracle correctness is established. One numba compile "
         "per kernel; minutes, not seconds.",
-    )
-    config.addinivalue_line(
-        "markers",
-        "input_finiteness: generates every kernel's inputs and runs its numpy reference for each "
-        "grading draw, checking both are finite (tests/test_input_finiteness.py). Hours at M and XL: "
-        "also ``site``, run on a cluster compute node before a release, never on CI.",
     )
     config.addinivalue_line(
         "markers",
