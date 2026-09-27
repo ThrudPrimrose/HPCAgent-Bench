@@ -160,8 +160,9 @@ REWARD_PATH = "/logs/verifier/reward.json"
 #: Host directory of the secret seeds (``hpcagent_bench/harness/hidden_tests``) the verifier mounts.
 #: Generated tasks never carry the seeds; ``hpcagent-bench harbor run`` sets this from the checkout.
 HIDDEN_TESTS_ENV = "HPCAGENT_BENCH_HIDDEN_TESTS"
-#: Where the verifier container sees them; ``tests/test.sh`` links it into the installed package.
-HIDDEN_TESTS_MOUNT = "/opt/hpcagent-bench-hidden-tests"
+#: Where the verifier container sees them, named in its HPCAGENT_BENCH_HIDDEN_TESTS
+#: (:mod:`hpcagent_bench.harness` imports ``hidden_tests`` from there).
+HIDDEN_TESTS_MOUNT = "/opt/hpcagent-bench-hidden/hidden_tests"
 #: The verifier's only volume; compose refuses to start when the variable is unset.
 SEEDS_VOLUME = (
     f"${{{HIDDEN_TESTS_ENV}:?set {HIDDEN_TESTS_ENV} to hpcagent_bench/harness/hidden_tests}}:{HIDDEN_TESTS_MOUNT}:ro"
@@ -619,10 +620,7 @@ def _test_sh(
         "set -uo pipefail",
         "mkdir -p /logs/verifier",
         "# The secret seeds arrive as a mount, never in the task; grade refuses when they are absent.",
-        f"if [ -d {HIDDEN_TESTS_MOUNT} ]; then",
-        "    pkg=\"$(python -c 'import hpcagent_bench.harness as h, os; print(os.path.dirname(h.__file__))')\"",
-        f'    ln -sfn {HIDDEN_TESTS_MOUNT} "$pkg/hidden_tests"',
-        "fi",
+        f"export HPCAGENT_BENCH_HIDDEN_TESTS={HIDDEN_TESTS_MOUNT}",
         "ARGS=()",
     ]
     for kt in kts:
