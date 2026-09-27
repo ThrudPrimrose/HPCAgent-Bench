@@ -103,7 +103,6 @@ def test_every_harness_the_launcher_accepts_has_a_display_name():
         ("claude", "Claude Code"),
         ("miniswe", "mini-SWE-agent"),
         ("openhands", "OpenHands"),
-        ("optimas", "Optimas"),
         ("brand-new-harness", "brand-new-harness"),
     ],
 )

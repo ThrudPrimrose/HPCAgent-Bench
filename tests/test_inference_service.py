@@ -179,7 +179,7 @@ def test_a_key_variable_that_is_not_set_fails_before_any_agent_starts(service: t
 
 
 def test_an_anthropic_shaped_service_refuses_an_openai_runner(service: types.ModuleType) -> None:
-    """mini-SWE, OpenHands and optimas all speak /v1/chat/completions; against a Messages-only
+    """mini-SWE and OpenHands both speak /v1/chat/completions; against a Messages-only
     service every request 404s, and the arm burns its wall clock discovering that."""
     with pytest.raises(SystemExit, match="miniswe"):
         service.from_environ(anthropic_arm(HARNESS="miniswe"))

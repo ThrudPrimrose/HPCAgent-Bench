@@ -712,8 +712,6 @@ def toolchain_checks(platform: str) -> list[Check]:
         Check("canonicalize", "isl gate (WavefrontSkew)", "dace-gate", "isl"),
         Check("canonicalize", "z3 gate (LoopToMap proof)", "dace-gate", "z3"),
         Check("python", "mpi4py", "py", "mpi4py"),
-        # imported as `agents`; optimas_tools.ToolAgent.__init__ needs it every episode.
-        Check("agent", "openai-agents SDK", "py", "agents"),
         # An agent runtime missing here kills the whole arm, not one kernel.
         Check("agent", "claude CLI", "exe", "claude"),
         *(Check("agent", f"{name} interpreter", "harness", name) for name in sorted(HARNESS_RUNTIMES)),

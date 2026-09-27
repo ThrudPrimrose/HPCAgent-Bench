@@ -163,7 +163,7 @@ def test_the_agent_tools_score_submit_and_profile_are_accepted(
 def test_the_harness_judge_client_and_its_verify_step_are_accepted(
     router: "TestClient", monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """``JudgeClient`` (optimas' episode loop, the python path of tools/verify.md)."""
+    """``JudgeClient`` (the python path of tools/verify.md)."""
     monkeypatch.setattr(urllib.request, "urlopen", through_router(router))
     monkeypatch.setenv("HPCAGENT_BENCH_RUN_ID", f"{ARM}.n0.p2.w1")
     client = JudgeClient("http://judge.test:8800", rank=0)

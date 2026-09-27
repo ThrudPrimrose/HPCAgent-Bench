@@ -239,15 +239,14 @@ RUN set -eux; \
       print('torch', torch.__version__)"; \
     python3 -c "import mpi4py.MPI as M; v = M.Get_library_version(); assert 'MPICH' in v, v; print(v.splitlines()[0])"
 
-# Judge-side python, installed above: the crawl/browser stack, the proxy the arms talk through, and
-# openai-agents. The pins are asserted here.
+# Judge-side python, installed above: the crawl/browser stack and the proxy the arms talk through.
+# The pins are asserted here.
 RUN set -eux; \
     python3 -c "import importlib.metadata as m; \
 want = {'litellm': '1.94.0', 'httpx2': '2.12.0', 'anyio': '4.14.2'}; \
 got = {name: m.version(name) for name in want}; \
 print('pinned proxy stack:', got); \
 assert got == want, got"; \
-    python3 -c "import agents; print('openai-agents', vars(agents).get('__version__', 'imported'))"; \
     python3 -W error -c "import httpx2, starlette.testclient as tc; assert tc.httpx is httpx2, tc.httpx"; \
     python3 -c 'import crawl4ai, crawl4ai.content_filter_strategy, crawl4ai.markdown_generation_strategy, fastapi, httpx, pydantic, uvicorn'; \
     playwright install --with-deps chromium; \

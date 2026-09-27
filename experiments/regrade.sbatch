@@ -83,6 +83,7 @@ fi
 # whole cpuset (its 24 cores), and ROCR_VISIBLE_DEVICES leaves the task one GPU, device 0.
 srun --ntasks-per-node=4 --cpus-per-task=24 --hint=nomultithread --mem=0 --environment="${edf}" \
     bash -c 'export ROCR_VISIBLE_DEVICES="${SLURM_LOCALID}" HPCAGENT_BENCH_JUDGE_GPUS_PER_NODE=0
+             export HPCAGENT_BENCH_HIDDEN_TESTS="$1/hpcagent_bench/harness/hidden_tests"
              export OMP_NUM_THREADS=24 OMP_PROC_BIND=close OMP_PLACES=cores
              export SCRATCH="$5" HPCAGENT_BENCH_SNAPSHOT_COMMIT="$6"
              exec "${HPCAGENT_BENCH_IMAGE_PYTHON}" -m hpcagent_bench.harness.regrade "$4" --worklist "$2" --shard "${SLURM_PROCID}" \

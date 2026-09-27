@@ -509,7 +509,7 @@ def test_a_worker_dir_without_a_transcript_has_no_token_total(token_cost: Module
 def test_a_runner_harnesss_totals_come_from_its_final_attempts_usage_file(
     token_cost: ModuleType, tmp_path: pathlib.Path
 ) -> None:
-    """A non-Claude harness (mini-SWE, OpenHands, Optimas) leaves ``usage.jsonl`` per attempt, moved
+    """A non-Claude harness (mini-SWE, OpenHands) leaves ``usage.jsonl`` per attempt, moved
     aside on a crash the same way ``claude.log`` is (harnesses.py's ``records``), and is read under
     the same rule: the final attempt is the task, the earlier ones are crashed spend."""
     (tmp_path / "usage.attempt1.jsonl").write_text(usage_line(300, 30) + "\n", encoding="utf-8")
@@ -532,80 +532,8 @@ def test_is_usage_transcript_recognizes_a_renamed_crashed_attempt(
     assert token_cost.is_usage_transcript(pathlib.Path(name)) is expected
 
 
-#: One optimas call as the OLD writer spelled it (``input`` = the WHOLE prompt, ``cached_input``
-#: repeating a part of it) and as the fixed one does (``input`` = the prompt MINUS its cached part).
-#: Same call either way: a 1000-token prompt of which 900 came from the prefix cache, 50 generated.
-OPTIMAS_OVERLAPPING = {"input": 1000, "cached_input": 900, "output": 50, "reasoning": 0}
-OPTIMAS_DISJOINT = {"input": 100, "cached_input": 900, "output": 50, "reasoning": 0, "prompt": 1000}
-#: The same call on an EARLY turn: the uncached remainder exceeds the cached prefix, which is what an
-#: old overlapping line looks like by magnitude alone. Only the ``prompt`` field tells them apart.
-OPTIMAS_DISJOINT_EARLY = {"input": 900, "cached_input": 100, "output": 50, "reasoning": 0, "prompt": 1000}
-
-
-def write_optimas_usage(worker_dir: pathlib.Path, records: list[dict[str, int]]) -> pathlib.Path:
-    """``usage.jsonl`` beside the ``optimas.log`` that tells an offline reader which harness wrote it."""
-    worker_dir.mkdir(parents=True, exist_ok=True)
-    (worker_dir / "optimas.log").write_text("", encoding="utf-8")
-    path = worker_dir / "usage.jsonl"
-    path.write_text("".join(json.dumps(record) + "\n" for record in records), encoding="utf-8")
-    return path
-
-
-def test_the_offline_fold_reads_an_old_optimas_line_and_a_new_one_as_the_same_call(
+def test_the_container_tool_and_the_analysis_agree_on_a_calls_prompt(
     token_cost: ModuleType, tmp_path: pathlib.Path
-) -> None:
-    """``episode.append_usage`` used to write the whole prompt as ``input`` AND repeat its cached
-    part in ``cached_input``, breaking the disjoint contract every reader sums under. Lines in both
-    spellings are already on disk, so the reader re-derives the disjoint prompt for the old ones --
-    without it the overlapping line prices a 1000-token prompt at 1900."""
-    old = token_cost.usage_episode_cost(write_optimas_usage(tmp_path / "old", [OPTIMAS_OVERLAPPING]))
-    new = token_cost.usage_episode_cost(write_optimas_usage(tmp_path / "new", [OPTIMAS_DISJOINT]))
-
-    early = token_cost.usage_episode_cost(write_optimas_usage(tmp_path / "early", [OPTIMAS_DISJOINT_EARLY]))
-
-    assert old == new == early, "the same call written three ways must cost the same"
-    assert old["naive_total"] == 1000 + 50, old
-    assert old["effective"] == 1000 + 50, old
-
-
-def test_only_optimas_gets_the_overlap_rule(token_cost: ModuleType, tmp_path: pathlib.Path) -> None:
-    """mini-SWE and OpenHands go through ``runner_common.usage_line`` and never wrote the overlap, so
-    a line of theirs whose uncached remainder happens to exceed its cached prefix keeps the contract
-    reading. The harness is read off the runner's own log beside the file."""
-    miniswe = tmp_path / "miniswe"
-    miniswe.mkdir()
-    (miniswe / "miniswe.log").write_text("", encoding="utf-8")
-    path = miniswe / "usage.jsonl"
-    path.write_text(json.dumps(OPTIMAS_OVERLAPPING) + "\n", encoding="utf-8")
-
-    assert token_cost.overlapping_usage_line(path) is False
-    assert token_cost.usage_episode_cost(path)["naive_total"] == 1000 + 900 + 50
-
-
-def test_the_judge_column_reads_an_old_optimas_line_and_a_new_one_as_the_same_call(
-    token_cost: ModuleType, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """The container-side reader carries the SAME rule as the offline one (it ships standalone and
-    cannot import it), keyed on ``$HPCAGENT_BENCH_HARNESS`` since it has no worker directory to look at.
-    Both spellings must give one number, or an optimas run's ``tokens`` column jumps the day the
-    writer was fixed."""
-    http_json = load_http_json()
-    old = write_optimas_usage(tmp_path / "old", [OPTIMAS_OVERLAPPING])
-    new = write_optimas_usage(tmp_path / "new", [OPTIMAS_DISJOINT])
-    early = write_optimas_usage(tmp_path / "early", [OPTIMAS_DISJOINT_EARLY])
-
-    monkeypatch.setenv("HPCAGENT_BENCH_HARNESS", "optimas")
-    assert http_json.usage_jsonl_tokens(str(old)) == 1000 + 50
-    assert http_json.usage_jsonl_tokens(str(new)) == 1000 + 50
-    assert http_json.usage_jsonl_tokens(str(early)) == 1000 + 50, "a fixed early-turn line is not an old one"
-
-    # Another runner never wrote the overlap, so its lines keep the contract reading.
-    monkeypatch.setenv("HPCAGENT_BENCH_HARNESS", "miniswe")
-    assert http_json.usage_jsonl_tokens(str(old)) == 1000 + 900 + 50
-
-
-def test_the_container_tool_and_the_analysis_agree_on_the_overlap_rule(
-    token_cost: ModuleType, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Two copies of one rule, in two files that cannot import each other (the deliberate-duplication
     note on ``USAGE_FIELDS``). Duplication nothing compares is duplication that drifts, and a drift
@@ -614,16 +542,16 @@ def test_the_container_tool_and_the_analysis_agree_on_the_overlap_rule(
     Compared on the quantity both derive: the call's whole prompt, counted once.
     """
     http_json = load_http_json()
-    monkeypatch.setenv("HPCAGENT_BENCH_HARNESS", "optimas")
     cases = (
-        OPTIMAS_OVERLAPPING,
-        OPTIMAS_DISJOINT,
-        OPTIMAS_DISJOINT_EARLY,
+        {"input": 100, "cached_input": 900, "output": 50, "reasoning": 0},
+        {"input": 900, "cached_input": 100, "output": 50, "reasoning": 7},
         {"input": 0, "cached_input": 0, "output": 1, "reasoning": 0},
     )
     for index, record in enumerate(cases):
-        path = write_optimas_usage(tmp_path / f"case{index}", [record])
-        offline = token_cost.usage_prompt_tokens(record, token_cost.overlapping_usage_line(path))
+        path = tmp_path / f"case{index}" / "usage.jsonl"
+        path.parent.mkdir()
+        path.write_text(json.dumps(record) + "\n", encoding="utf-8")
+        offline = token_cost.usage_prompt_tokens(record)
         container = http_json.usage_jsonl_tokens(str(path)) - record["output"] - record["reasoning"]
         assert offline == container, record
 

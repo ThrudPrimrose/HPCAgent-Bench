@@ -467,7 +467,6 @@ harnesses:
   claude: Claude Code
   miniswe: mini-SWE-agent
   openhands: OpenHands
-  optimas: Optimas
 
 # Compilers and libraries a kernel is BUILT with -- the entity a figure with no agent in it varies.
 # KEY ORDER IS HUE ORDER; most-plotted first, so the common ones get the most separated hues.

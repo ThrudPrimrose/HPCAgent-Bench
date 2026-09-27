@@ -177,7 +177,7 @@ compose_tools_prompt() {  # compose_tools_prompt <fragment> <output> [cli]
     fi
 }
 # One variant per harness tool paragraph: containers/agent/tools-<name>.md -> prompt-<name>.md. `cli`
-# (mini-SWE) is the shell-only one; optimas keeps claude's tool NAMES but has no shell.
+# (mini-SWE) is the shell-only one.
 for fragment in "${repo}"/containers/agent/tools-*.md; do
     [[ -f "${fragment}" ]] || continue
     variant=$(basename -- "${fragment}" .md)

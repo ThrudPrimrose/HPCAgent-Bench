@@ -131,14 +131,6 @@ jobs:
           sudo sysctl -w kernel.perf_event_paranoid=1 >/dev/null 2>&1 || true
           echo "HPCAGENT_BENCH_CI_PAPI_INSTALLED=1" >> "$GITHUB_ENV"
 
-      # test_optimas_tools.py drives the vendored openai-agents SDK (vendor/ is gitignored).
-      - name: Setup -- vendored openai-agents SDK
-        if: ${{ matrix.shard != 'floor' && !cancelled() }}
-        run: |
-          target="${RUNNER_TEMP}/agent-optimas-test"
-          python -m pip install --target "${target}" openai-agents
-          echo "HPCAGENT_BENCH_OPTIMAS_VENDOR_DIR=${target}" >> "$GITHUB_ENV"
-
       - name: Phase 1 -- unit sweep (every test file no other phase claims)
         if: ${{ matrix.shard != 'floor' && !cancelled() }}
         timeout-minutes: 38

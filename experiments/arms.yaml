@@ -149,7 +149,7 @@ llrblind:
     AGENT_HARVEST_WORKSPACE: 1
     HPCAGENT_BENCH_GRADING_FINAL_GRADE_ON_SUBMIT: 1
 
-# The harness comparison (HARNESSES="claude miniswe openhands optimas"): one serving base and one
+# The harness comparison (HARNESSES="claude miniswe openhands"): one serving base and one
 # judge sizing, so the harness is the only variable.
 harness:
   extends: llrbase-c

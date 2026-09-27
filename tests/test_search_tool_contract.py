@@ -93,7 +93,7 @@ def test_verify_md_does_not_claim_to_be_cheap() -> None:
 
 
 def test_web_search_md_does_not_claim_the_agents_own_capability() -> None:
-    """The HTTP-loop harnesses (miniswe/openhands/optimas, via service_task.j2) have no browsing
+    """The HTTP-loop harnesses (miniswe/openhands, via service_task.j2) have no browsing
     tool of their own (containers/agent/harness/run_openhands.py: 'No browser or delegate tools';
     run_miniswe.py: bash only) -- telling them to use 'your own web-search capability' pointed at
     a capability that is not there. The doc must instead name the real judge route."""

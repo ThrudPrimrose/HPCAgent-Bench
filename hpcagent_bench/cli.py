@@ -1344,7 +1344,7 @@ def build_parser() -> argparse.ArgumentParser:
         choices=sorted(BASELINES),
         help="agent-baseline registry entry (default tools): which named prompt/round/search "
         "policy from hpcagent_bench.harness.baselines.BASELINES drives the run, e.g. bare = "
-        "one minimal-prompt attempt, optimas = tools under a reward-driven prompt search. "
+        "one minimal-prompt attempt. "
         "Serial path only (--pipeline off); NOT --baseline, which is the speedup denominator "
         "above.",
     )

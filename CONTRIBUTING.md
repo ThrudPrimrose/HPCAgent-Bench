@@ -280,7 +280,7 @@ Details: [prompts.md](docs/prompts.md#prompt-variants).
 ## Add an agent harness
 
 A harness runs the model's tool loop for one campaign agent, next to `claude`, `miniswe`,
-`openhands` and `optimas`.
+and `openhands`.
 
 | File | Change |
 |---|---|

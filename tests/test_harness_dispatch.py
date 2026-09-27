@@ -26,7 +26,7 @@ REPO = pathlib.Path(__file__).resolve().parents[1]
 EXAMPLE = REPO / "experiments"
 AGENT = REPO / "containers" / "agent"
 KERNEL = "loop_level_reasoning/argmax_value/argmax_value"
-RUNNERS = ("miniswe", "openhands", "optimas")
+RUNNERS = ("miniswe", "openhands")
 
 #: Shell variables that would change what the driver launches if the test process inherited them.
 LEAKY_PREFIXES = (
@@ -292,7 +292,7 @@ def test_the_claude_arm_environment_and_files_carry_nothing_of_the_runners(drive
 
 
 def expected_runner_argv(harness: str, workdir: pathlib.Path) -> list[str]:
-    """The contract argv; for optimas without its trailing ``--timeout-seconds`` value."""
+    """The contract argv."""
     endpoint = ["--base-url", "http://n1:8000/v1", "--model", "qwen38", "--usage", str(workdir / "usage.jsonl")]
     # The launcher's common reply cap, sent by every harness; the fixture sets no AGENT_EFFORT, so
     # no rung is on the contract argv. It names no window either, so the context policy's cap
@@ -311,37 +311,18 @@ def expected_runner_argv(harness: str, workdir: pathlib.Path) -> list[str]:
             *endpoint,
             *compaction,
         ]
-    if harness == "openhands":
-        return [
-            "/opt/harness/openhands/bin/python",
-            str(AGENT / "harness" / "run_openhands.py"),
-            "--workdir",
-            str(workdir),
-            "--prompt",
-            str(workdir / "prompt.txt"),
-            *endpoint,
-            *window,
-            *compaction,
-            "--mcp-config",
-            str(workdir / "mcp.json"),
-        ]
     return [
-        "python3",
-        "-m",
-        "hpcagent_bench.harness.episode",
-        "--baseline",
-        "optimas",
-        "--kernel",
-        KERNEL,
-        "--language",
-        "c",
+        "/opt/harness/openhands/bin/python",
+        str(AGENT / "harness" / "run_openhands.py"),
         "--workdir",
         str(workdir),
         "--prompt",
         str(workdir / "prompt.txt"),
         *endpoint,
         *window,
-        "--timeout-seconds",
+        *compaction,
+        "--mcp-config",
+        str(workdir / "mcp.json"),
     ]
 
 
@@ -354,11 +335,7 @@ def test_a_runner_is_launched_with_its_contract_command_in_its_workdir(driver, m
     assert rc == 0
     argv = launches[0]["argv"]
     assert launches[0]["cwd"] == workdir
-    if harness == "optimas":
-        assert argv[:-1] == expected_runner_argv(harness, workdir)
-        assert 3500 < int(argv[-1]) <= 3600, f"--timeout-seconds must be the wall budget left: {argv[-1]}"
-    else:
-        assert argv == expected_runner_argv(harness, workdir)
+    assert argv == expected_runner_argv(harness, workdir)
     assert (workdir / f"{harness}.log").read_text(encoding="utf-8").startswith("runner output\n")
 
 
@@ -402,30 +379,6 @@ def test_a_runner_gets_the_claude_environment_minus_claudes_own_plus_the_runner_
     assert (workdir / "mcp.json").read_bytes() == claude_mcp
 
 
-def test_only_the_optimas_launch_puts_the_mounted_checkout_on_pythonpath(
-    driver: types.ModuleType, monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path
-) -> None:
-    """run_cluster.sh binds the submitting checkout for HARNESS=optimas alone (agent_ro_binds), and
-    exports its path as HPCAGENT_BENCH_SRC_DIR so `python -m hpcagent_bench.harness.episode` imports
-    today's episode.py instead of whatever hpcagent_bench the judge image baked in. Claude never
-    reads HPCAGENT_BENCH_SRC_DIR at all, so setting it must not change claude's launch environment."""
-    mounted_src = str(tmp_path / "opt" / "hpcagent-bench-src")
-    monkeypatch.setenv("HPCAGENT_BENCH_SRC_DIR", mounted_src)
-    launches = launcher(monkeypatch, driver, claude_run)
-    run(driver, tmp_path)
-    claude_env = launches[0]["env"]
-    assert mounted_src not in claude_env.get("PYTHONPATH", "").split(":")
-
-    monkeypatch.setenv("HARNESS", "optimas")
-    launches = launcher(monkeypatch, driver, runner_run(end=FINISHED))
-    run(driver, tmp_path)
-    optimas_env = launches[0]["env"]
-    pythonpath = optimas_env["PYTHONPATH"]
-    # The vendored openai-agents SDK leads (imported before hpcagent_bench needs it), the mounted
-    # checkout itself follows -- both under mounted_src, neither is the image's own baked copy.
-    assert pythonpath.split(":")[:2] == [f"{mounted_src}/vendor/agent-optimas", mounted_src]
-
-
 @pytest.mark.parametrize("harness", RUNNERS)
 def test_a_runner_is_told_the_launchers_reply_cap(
     driver: types.ModuleType, monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path, harness: str
@@ -440,13 +393,12 @@ def test_a_runner_is_told_the_launchers_reply_cap(
     assert argv[argv.index("--max-output-tokens") + 1] == "16384"
 
 
-@pytest.mark.parametrize(("harness", "told"), [("miniswe", "3600"), ("openhands", "3600"), ("optimas", None)])
+@pytest.mark.parametrize(("harness", "told"), [("miniswe", "3600"), ("openhands", "3600")])
 def test_a_runner_waits_on_a_model_request_as_long_as_claude_does(
     driver: types.ModuleType, monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path, harness: str, told: str | None
 ) -> None:
     """run_cluster.sh's API_TIMEOUT_MS is claude's whole-request cap; OpenHands (300 s) and mini-SWE's
-    litellm (600 s) gave up sooner on the same queued request (owed waves 645701, 645700). Optimas'
-    episode CLI, baked into the judge image, takes no such flag and is not told."""
+    litellm (600 s) gave up sooner on the same queued request (owed waves 645701, 645700)."""
     monkeypatch.setenv("HARNESS", harness)
     monkeypatch.setenv("API_TIMEOUT_MS", "3600000")
     launches = launcher(monkeypatch, driver, runner_run(end=FINISHED))
@@ -460,7 +412,7 @@ def test_a_runner_waits_on_a_model_request_as_long_as_claude_does(
 QWEN_LADDER = "low medium xhigh"
 
 
-@pytest.mark.parametrize(("harness", "rung"), [("miniswe", "xhigh"), ("openhands", "xhigh"), ("optimas", "xhigh")])
+@pytest.mark.parametrize(("harness", "rung"), [("miniswe", "xhigh"), ("openhands", "xhigh")])
 def test_a_runner_is_sent_the_top_rung_of_its_models_ladder_that_its_client_can_spell(
     driver: types.ModuleType, monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path, harness: str, rung: str
 ) -> None:
@@ -491,11 +443,10 @@ def test_a_model_with_no_ladder_sends_no_effort_flag_at_all(
 
 #: What each runner is told for an arm served at 131072 (L 131072, R 16384, trigger 98959): the window
 #: where its client takes one, the trigger where it compacts (OpenHands' condenser, mini-SWE's own
-#: history window). Optimas' tool loop restarts from the prompt every round and has no trigger.
+#: history window).
 POLICY_FLAGS = {
     "miniswe": {"--max-output-tokens": "16384", "--compaction-trigger": "98959"},
     "openhands": {"--max-output-tokens": "16384", "--context-length": "131072", "--compaction-trigger": "98959"},
-    "optimas": {"--max-output-tokens": "16384", "--context-length": "131072"},
 }
 
 
@@ -684,7 +635,7 @@ def test_a_runner_that_dies_without_an_end_file_is_relaunched_and_its_attempt_ke
 def test_a_runner_that_fails_after_writing_its_end_file_is_not_relaunched(driver, monkeypatch, tmp_path) -> None:
     """The end file is the runner's own verdict, as claude's result event is: relaunching would
     overwrite it."""
-    monkeypatch.setenv("HARNESS", "optimas")
+    monkeypatch.setenv("HARNESS", "openhands")
     launches = launcher(monkeypatch, driver, runner_run(code=1, end={"reason": "error", "turns": 2, "detail": "x"}))
     rc, workdir = run(driver, tmp_path)
     assert rc == 1 and len(launches) == 1
@@ -706,7 +657,7 @@ def materialize_prompts(tmp_path, monkeypatch, prompt: pathlib.Path = AGENT / "p
     repo = tmp_path / "repo"
     (repo / "containers" / "agent").mkdir(parents=True)
     shutil.copy(prompt, repo / "containers" / "agent" / "prompt.md")
-    for name in ("tools-cli.md", "tools-openhands.md", "tools-optimas.md"):
+    for name in ("tools-cli.md", "tools-openhands.md"):
         shutil.copy(AGENT / name, repo / "containers" / "agent" / name)
     shared = tmp_path / "shared"
     monkeypatch.setenv("HPCAGENT_BENCH_HOST_PYTHON", sys.executable)
@@ -738,7 +689,6 @@ def test_the_claude_arm_still_reads_prompt_md_byte_for_byte(tmp_path, monkeypatc
     [
         ("prompt-cli.md", "tools-cli.md", True),
         ("prompt-openhands.md", "tools-openhands.md", False),
-        ("prompt-optimas.md", "tools-optimas.md", False),
     ],
 )
 def test_a_harness_prompt_is_prompt_md_with_only_the_file_tools_swapped(tmp_path, monkeypatch, variant, fragment, cli):
@@ -753,14 +703,6 @@ def test_a_harness_prompt_names_no_claude_file_tool(tmp_path, monkeypatch, varia
     text = (materialize_prompts(tmp_path, monkeypatch) / variant).read_text(encoding="utf-8")
     offenders = [line for line in text.splitlines() if "`Read`" in line or "`Edit`" in line]
     assert not offenders, offenders
-
-
-def test_the_optimas_prompt_promises_no_shell(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """optimas has Read/Edit and no shell (hpcagent_bench.harness.optimas_tools); told it has one,
-    a model spends its turns on a Bash that only ever answers with an error."""
-    text = (materialize_prompts(tmp_path, monkeypatch) / "prompt-optimas.md").read_text(encoding="utf-8")
-    assert "You have a shell" not in text and "cat > f <<'EOF'" not in text
-    assert "there is no shell" in text
 
 
 def test_the_cli_prompt_names_every_tool_bullet_as_its_shell_command(
@@ -779,7 +721,7 @@ def test_a_prompt_without_the_file_tools_paragraph_writes_no_variant(tmp_path, m
     bare = tmp_path / "bare-prompt.md"
     bare.write_text("base rules\n{{HINTS}}\n\nTask:\n\n{{TASK}}\n", encoding="utf-8")
     shared = materialize_prompts(tmp_path, monkeypatch, bare)
-    assert not any((shared / name).exists() for name in ("prompt-cli.md", "prompt-openhands.md", "prompt-optimas.md"))
+    assert not any((shared / name).exists() for name in ("prompt-cli.md", "prompt-openhands.md"))
     assert "no file-tools paragraph" in (shared / "stderr.txt").read_text(encoding="utf-8")
 
 

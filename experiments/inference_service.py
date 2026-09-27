@@ -54,7 +54,7 @@ AUTH_KEY_HEADER = "x-api-key"
 #: repeated here as the three names rather than imported, because this file is also read on the
 #: batch host, where the agent payload is not staged.
 HARNESSES_BY_API = {
-    API_OPENAI: ("miniswe", "openhands", "optimas"),
+    API_OPENAI: ("miniswe", "openhands"),
     API_ANTHROPIC: ("claude",),
 }
 

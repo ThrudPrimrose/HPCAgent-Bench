@@ -751,7 +751,7 @@ def rep_tag() -> int:
 
 def harness_tag() -> str | None:
     """``record.harness`` -- the agent harness that drove the arm (``claude``, ``miniswe``,
-    ``openhands``, ``optimas``), or None when the arm named none."""
+    ``openhands``), or None when the arm named none."""
     harness = str(config.get("record.harness", "") or "").strip()
     return harness or None
 

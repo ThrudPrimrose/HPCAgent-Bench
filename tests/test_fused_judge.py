@@ -355,7 +355,7 @@ def echo_fixture() -> Iterator[str]:
 def test_every_judge_client_sends_the_token_only_inside_a_fused_job(
     token: str, echo: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """The agent tools, JudgeClient (optimas, episode.py) and the exit promotion all name the worker."""
+    """The agent tools, JudgeClient and the exit promotion all name the worker."""
     monkeypatch.setenv(fused.TOKEN_ENV, token)
     http_json = load(HTTP_JSON, "http_json_fused")
     assert (http_json.WORKER_TOKEN_ENV, http_json.WORKER_TOKEN_HEADER) == (fused.TOKEN_ENV, fused.TOKEN_HEADER)

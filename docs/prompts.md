@@ -4,7 +4,7 @@ HPCAgent-Bench has two prompt systems. They share no text.
 
 | Prompt | Who reads it | Source | Assembled by |
 |---|---|---|---|
-| Campaign prompt | agents on the cluster (Claude Code, mini-SWE, OpenHands, Optimas) | `containers/agent/*.md` | `experiments/agent_driver.py` |
+| Campaign prompt | agents on the cluster (Claude Code, mini-SWE, OpenHands) | `containers/agent/*.md` | `experiments/agent_driver.py` |
 | In-process prompt | `hpcagent-bench agent` backends and the `--service` HTTP-loop prompt | `hpcagent_bench/harness/prompts/*.j2` | `build_prompt` in `hpcagent_bench/harness/prompts.py` |
 
 A fact written only into a `.j2` section never reaches a campaign agent; state campaign facts in
@@ -24,7 +24,7 @@ paragraph for harnesses without Claude's `Read`/`Edit`.
 | `prompt-offload.md`, `prompt-offload-device.md` | + `offload-build.md`, `offload-device-build.md` |
 | `prompt-triton.md`, `prompt-triton-device.md` | + `triton-build.md`, `triton-device-build.md` |
 | `prompt-repo.md` | + `repo-workflow.md` |
-| `prompt-cli.md`, `prompt-openhands.md`, `prompt-optimas.md` | file-tools paragraph swapped for `tools-cli.md`, `tools-openhands.md`, `tools-optimas.md` |
+| `prompt-cli.md`, `prompt-openhands.md` | file-tools paragraph swapped for `tools-cli.md`, `tools-openhands.md` |
 
 An arm picks its variant with `AGENT_PROMPT_FILE` (default `prompt.md`, set in
 `experiments/layers/common.env`). `agent_driver.py` then fills the slots:

@@ -16,7 +16,7 @@
 #   MODELS            space-separated (default qwen38)
 #   LANGUAGES         space-separated (default: the base's LANGUAGE)
 #   PACKETS           space-separated packet specs, `none` for the control (default none)
-#   HARNESSES         claude (default), miniswe, openhands, optimas
+#   HARNESSES         claude (default), miniswe, openhands
 #   OFFLOAD, OFFLOAD_RESIDENCY   a directive-offload arm: OFFLOAD=openmp, residency host|device
 #   EXPERIMENT, RECORD_EXPERIMENT, STAMP   arm and run-root name, recorded experiment (default TAG)
 #   REPEAT            agents per kernel (default the base's SUBMIT_REPEAT, else 1)
@@ -60,7 +60,7 @@ BEGIN=${BEGIN:-}
 [[ "${BEGIN}" != now ]] || BEGIN=""
 
 #: The task prompt of each harness but claude, which reads its language's prompt.
-declare -A HARNESS_PROMPT=([miniswe]=prompt-cli.md [openhands]=prompt-openhands.md [optimas]=prompt-optimas.md)
+declare -A HARNESS_PROMPT=([miniswe]=prompt-cli.md [openhands]=prompt-openhands.md)
 
 # base_value <flat env> <KEY> -> <KEY>'s value in a rendered base, empty when unset
 base_value() { sed -n "s/^$2=//p" <<<"$1" | tail -n 1; }
@@ -143,8 +143,6 @@ stage_arm() {
         -e '/^SUBMIT_[A-Z_]*=/d' || return 2
     local -a kvs=("AGENT_PROMPT_FILE=$(prompt_of "${harness}" "${lang}" "$(base_value "${flat}" AGENT_PROMPT_FILE)")")
     [[ -z "${NAMED_HARNESS}" ]] || kvs+=("HARNESS=${harness}")
-    # the optimas runner imports hpcagent_bench, which only the judge image carries
-    [[ "${harness}" != optimas ]] || kvs+=("AGENT_CE_ENV=$(base_value "${flat}" JUDGE_CE_ENV)")
     # a python submission is called, not compiled: source mode refuses it
     [[ ! "${lang}" =~ ^(triton|triton-device|python|pytriton)$ ]] || kvs+=("JUDGE_INPUT_MODE=py-binding")
     [[ -z "${AGENTS_PER_NODE:-}" ]] || kvs+=("AGENTS_PER_NODE=${AGENTS_PER_NODE}")

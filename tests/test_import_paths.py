@@ -36,8 +36,7 @@ ALLOWED: dict[str, str] = {
     "containers/agent/tools/hpcagent_bench_tool.py": "image script: own-directory insert (PYTHONSAFEPATH=1)",
     "containers/agent/tools/mcp_server.py": "image script: own-directory insert (PYTHONSAFEPATH=1)",
     "experiments/agent_driver.py": "agent-image script: own-directory insert for its staged siblings",
-    "experiments/harnesses.py": "agent-image module: own-directory insert; optimas_env builds the "
-    "optimas runner's PYTHONPATH (mounted checkout + vendored SDK) inside the judge image",
+    "experiments/harnesses.py": "agent-image module: own-directory insert",
     "containers/images/selfcontained_check.py": "REMOVES its own directory from sys.path to "
     "prove the image imports without the checkout",
     # Third-party runtimes, not this repository's code.
@@ -47,7 +46,6 @@ ALLOWED: dict[str, str] = {
     # Tests: a child process or a temp module, given its own path.
     "tests/test_dace_helper_programs.py": "temp module written under tmp_path",
     "tests/test_harness_runners.py": "child mimics the image: runner/tool dir on the path, PYTHONSAFEPATH=1",
-    "tests/test_optimas_tools.py": "vendored openai-agents SDK, auto-reverted by monkeypatch",
     "tests/test_packaging.py": "child imports the installed wheel and nothing else",
     "tests/test_packet_wiring.py": "child mimics the image: mcp_server dir on the path, PYTHONSAFEPATH=1",
     "tests/test_perf_reports.py": "temp numba module under tmp_path, auto-reverted by monkeypatch",
