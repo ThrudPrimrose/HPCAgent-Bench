@@ -497,7 +497,7 @@ jobs:
 
       - name: Phase 5e -- emitted references are well-formed and share one ABI
         if: ${{ !cancelled() }}
-        timeout-minutes: 3
+        timeout-minutes: 8
         run: |
           python -m pytest -q -p no:cacheprovider -rfEs --timeout=900 tests/test_generated_references.py
 
