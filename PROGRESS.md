@@ -12,6 +12,9 @@ Running log of the unbloat/unslop/registry work on `release-v0.1`. Deleted befor
   taxonomy go.
 - De-duplication and design pass: everything, including high-risk items, with behaviour kept identical
   (translators proven against a golden corpus of emitted code).
+- Code matches the paper (HPCAgent_Bench, ICLR 2027 submission): anything can be registered with a
+  decorator, including anti-cheat measures. Job launch collects every registered measure and records the
+  active set with the run.
 - CI toolchain: GCC >= 15 is enforced by `scripts/checks/verify_toolchain.py` (CI installs GCC 16).
 
 ## Checkpoints
@@ -29,6 +32,7 @@ Running log of the unbloat/unslop/registry work on `release-v0.1`. Deleted befor
 | Docs | One owner per topic; merge perf_protocol, job_submission, owed_and_checkpointing, AMD-SUBMISSION; delete local_coding_agents; fix ~20 stale references; drop mi200-serving docs; ~7.9k -> ~5.2k lines | running |
 | Registries | `registry.py`; `@framework` replacing FRAMEWORK_META + ~8 hand-kept name lists; `@harness` (listed in 4 places today); `@syntax_check` / `@tool` in the agent image; registry.yaml pruning | running |
 | Kernels | Manifest key audit (drop unread keys from 702 yaml); `@kernel` read statically, interchangeable with yaml | running |
+| Anti-cheat | `hpcagent_bench/anticheat/`: `@anticheat(name, stage, action)` one file per measure, autoloaded; the paper's guards (input cycling, two secret seeds + image check, speedup-only score tool, device isolation, plausibility/roofline bounds, static source check, sandbox, portability probe) moved behind it; launch records the active set; `hpcagent-bench anticheat list` | running |
 | Translators | Shared AST helpers, BaseEmitter scaffolding, Fortran kernel/helper merge, dace_emit split, shared type oracle; two suspected bugs (C OpenMP pinned constants, Fortran helper int kinds) | running |
 
 ## Queued
