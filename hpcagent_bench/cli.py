@@ -1111,7 +1111,7 @@ def cmd_regrade(args: argparse.Namespace) -> int:
 
     Forwards to :mod:`hpcagent_bench.harness.regrade`, which owns the real ``worklist``/``run``
     subcommands -- see ``hpcagent-bench regrade worklist --help`` / ``hpcagent-bench regrade run
-    --help``, or docs/measurement_statistics.md ("migrating old rows")."""
+    --help``, or docs/measurement_statistics.md ("Reduction stamps")."""
     from hpcagent_bench.harness.regrade import main as regrade_main
 
     return regrade_main(args.regrade_args)
