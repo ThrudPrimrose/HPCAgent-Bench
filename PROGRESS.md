@@ -25,15 +25,13 @@ Running log of the unbloat/unslop/registry work on `release-v0.1`. Deleted befor
 | 2 | `eedbe2b` | mi200 arms: a hosted model needs only `partition-mi200.env`; a served model needs its own `partition-mi200-<model>.env`. GCC >= 15 toolchain gate. |
 | 3 | `9121285` | Dead code found by vulture removed (~90 lines). Most vulture hits were false positives (kernel entry points loaded by name, FastAPI routes, http.server overrides, CLI enum choices, TYPE_CHECKING imports). |
 | 4 | `1fddcc1` | Docs: one owner per topic. Merged and deleted `perf_protocol`, `job_submission`, `owed_and_checkpointing`, `AMD-SUBMISSION`, `docs/README`, `local_coding_agents`. README 286->169, CONTRIBUTING 325->146 lines; mi200 serving docs removed; stale `.env.base-*`, sbatch and script references fixed; 0 broken links (was 5). Markdown 10,474 -> 8,911 lines. |
+| 5 | `2cdd441` | Translator bug fixes with tests: C OpenMP variants declare the pinned config constants their body reads; Fortran contained helpers take integer kinds from `implicit_int_kinds` like the kernel body. |
 
-## In progress
+## Stopped (usage limit), saved in `handoff/`
 
-| Workstream | Scope | Status |
-|---|---|---|
-| Registries | `registry.py`; `@framework` replacing FRAMEWORK_META + ~8 hand-kept name lists; `@harness` (listed in 4 places today); `@syntax_check` / `@tool` in the agent image; registry.yaml pruning | running |
-| Kernels | Manifest key audit (drop unread keys from 702 yaml); `@kernel` read statically, interchangeable with yaml | running |
-| Anti-cheat | `hpcagent_bench/anticheat/`: `@anticheat(name, stage, action)`, one file per measure, autoloaded. A measure is a predicate over an answer's evidence (source, built artifact, runtime observations, timings) returning a finding. Registered: speedup bounds (2000x host / 16,000x device), roofline bound, no GPU code in CPU tasks (device runtime mapped, embedded code object, device symbols), static source patterns (sleep, timers, file I/O, runtime loading), portability probe. Protocol, not measures (documented separately): sandbox namespaces (a launch/judge-API matter), two secret seeds, speedup-only score tool, input cycling, image seed check. Launch records the active set; `hpcagent-bench anticheat list` | running |
-| Translators | Shared AST helpers, BaseEmitter scaffolding, Fortran kernel/helper merge, dace_emit split, shared type oracle; two suspected bugs (C OpenMP pinned constants, Fortran helper int kinds) | running |
+Registries, kernels, anti-cheat and the translator de-duplication were stopped mid-task and are not merged.
+Their work is saved as patches in `handoff/`; `HANDOFF.md` has each patch's state, how it applies to
+release-v0.1, and the order to finish them.
 
 ## Queued
 
