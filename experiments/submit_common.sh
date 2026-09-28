@@ -177,17 +177,16 @@ stage_base_env() {
 partition_is_default() { [[ -z "${PARTITION:-}" || "${PARTITION}" == mi300 ]]; }
 
 # apply_partition <env> <model> -- renames every *_CE_ENV of <env> from its -mi300- EDF to the -<P>-
-# one, then pins layers/partition-<P>.env over it and, for a model served on our nodes, also
-# layers/partition-<P>-<model>.env. A hosted model (INFERENCE_SOURCE=service) runs no engine here and
-# needs no serving layer. Refuses a served model with no serving config on <P> and a recorded
-# experiment that does not name <P>, so its rows never pool with mi300 data.
+# one, then pins layers/partition-<P>.env and, for a model served on our nodes,
+# layers/partition-<P>-<model>.env over it. A hosted model (INFERENCE_SOURCE=service) runs no engine
+# here, so it needs no serving layer. Refuses a served model with no serving config on <P> and a
+# recorded experiment that does not name <P>, so its rows never pool with mi300 data.
 apply_partition() {
     local env="$1" model="$2" layer kv experiment
     partition_is_default && return 0
     local dir; dir="$(dirname -- "${BASH_SOURCE[0]}")/layers"
     local layers=("${dir}/partition-${PARTITION}.env")
-    [[ "$(sed -n 's/^INFERENCE_SOURCE=//p' "${env}" | tail -1)" == service ]] \
-        || layers+=("${dir}/partition-${PARTITION}-${model}.env")
+    grep -qx 'INFERENCE_SOURCE=service' "${env}" || layers+=("${dir}/partition-${PARTITION}-${model}.env")
     sed -i -E "s/^([A-Z_]*CE_ENV=.*)-mi300-/\1-${PARTITION}-/" "${env}"
     for layer in "${layers[@]}"; do
         [[ -f "${layer}" ]] || { echo "apply_partition: no ${layer##*/}: ${model} has no ${PARTITION} config" >&2; return 2; }
